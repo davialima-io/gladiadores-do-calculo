@@ -1,0 +1,18 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Arquivos de compilação
+Debug/
+Release/
+x64/
+x86/
+
+# Arquivos temporários
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.log
