@@ -1,3 +1,4 @@
+#pragma once
 #ifndef JOGADOR_H
 #define JOGADOR_H
 
@@ -17,13 +18,13 @@ typedef struct
 } Jogador;
 
 
-// Coloca o jogador na posiÃ§Ã£o inicial
+// Coloca o jogador na posição inicial
 void jogador_inicializar(
     Jogador* jogador
 );
 
 
-// Atualiza a movimentaÃ§Ã£o do jogador
+// Atualiza a movimentação do jogador
 void jogador_atualizar(
     Jogador* jogador,
     ALLEGRO_KEYBOARD_STATE* estado_teclado

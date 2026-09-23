@@ -6,7 +6,7 @@ void inimigo_inicializar(
     Inimigo* inimigo
 )
 {
-    // PosiÃ§Ã£o inicial do inimigo
+    // Posição inicial do inimigo
     inimigo->x = 600;
     inimigo->y = 250;
 
@@ -16,7 +16,7 @@ void inimigo_inicializar(
     // Velocidade horizontal
     inimigo->velocidade = 2;
 
-    // ComeÃ§a andando para a direita
+    // Começa andando para a direita
     inimigo->direcao = 1;
 
     // Define a vida inicial
@@ -69,7 +69,7 @@ void inimigo_receber_dano(
 
     /*
         Quando a vida chega a zero,
-        o inimigo volta para a posiÃ§Ã£o inicial
+        o inimigo volta para a posição inicial
         com a vida cheia.
     */
 
@@ -94,7 +94,7 @@ bool inimigo_colidiu_com_tiro(
 {
     /*
         Verifica se o centro do tiro
-        estÃ¡ dentro do quadrado do inimigo.
+        está dentro do quadrado do inimigo.
     */
 
     if (tiro_x >= inimigo->x &&
@@ -114,7 +114,7 @@ void inimigo_desenhar(
     Inimigo* inimigo
 )
 {
-    // NÃ£o desenha um inimigo sem vida
+    // Não desenha um inimigo sem vida
     if (inimigo->vida <= 0)
     {
         return;
@@ -125,7 +125,7 @@ void inimigo_desenhar(
         DESENHO DO INIMIGO
 
         Por enquanto usamos um quadrado vermelho.
-        Depois  colocar a imagem do leÃ£o.
+        Depois  colocar a imagem do leão.
     */
 
     al_draw_filled_rectangle(

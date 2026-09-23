@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MENU_H
 #define MENU_H
 
@@ -14,7 +15,7 @@ void menu_desenhar(
 );
 
 
-// Verifica se o jogador clicou no bot√£o START
+// Verifica se o jogador clicou no bot„o START
 bool menu_clicou_start(
     float mouse_x,
     float mouse_y

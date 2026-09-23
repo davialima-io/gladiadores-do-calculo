@@ -1,7 +1,6 @@
+
 #ifndef INIMIGO_H
 #define INIMIGO_H
-
-#include <stdbool.h>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -24,7 +23,7 @@ typedef struct
 } Inimigo;
 
 
-// Coloca o inimigo na posiÃ§Ã£o inicial
+// Coloca o inimigo na posição inicial
 void inimigo_inicializar(
     Inimigo* inimigo
 );

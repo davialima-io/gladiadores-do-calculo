@@ -15,42 +15,42 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="inimigo.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
     <ClCompile Include="jogador.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
-    <ClCompile Include="inimigo.c">
-      <Filter>Arquivos de Origem</Filter>
-    </ClCompile>
-    <ClCompile Include="tiro.c">
-      <Filter>Arquivos de Origem</Filter>
-    </ClCompile>
     <ClCompile Include="jogo.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
     <ClCompile Include="menu.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+    <ClCompile Include="tiro.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="jogador.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
     <ClInclude Include="inimigo.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
-    <ClInclude Include="tiro.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
     <ClInclude Include="jogo.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="tiro.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
     <ClInclude Include="menu.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="jogador.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
   </ItemGroup>

@@ -33,7 +33,7 @@ void tiro_disparar(
 )
 {
     /*
-        Procuramos o primeiro espa√ßo livre
+        Procuramos o primeiro espaÁo livre
         no vetor de tiros.
     */
 
@@ -45,7 +45,7 @@ void tiro_disparar(
         }
 
 
-        // Calcula a dire√ß√£o do tiro
+        // Calcula a direÁ„o do tiro
         float direcao_x =
             mouse_x - jogador_x;
 
@@ -53,14 +53,14 @@ void tiro_disparar(
             mouse_y - jogador_y;
 
 
-        // Calcula a dist√¢ncia at√© o mouse
+        // Calcula a dist‚ncia atÈ o mouse
         float distancia = sqrt(
             direcao_x * direcao_x +
             direcao_y * direcao_y
         );
 
 
-        // N√£o dispara se o mouse estiver exatamente
+        // N„o dispara se o mouse estiver exatamente
         // sobre o centro do jogador.
         if (distancia == 0)
         {
@@ -68,14 +68,14 @@ void tiro_disparar(
         }
 
 
-        // Normaliza a dire√ß√£o
+        // Normaliza a direÁ„o
         direcao_x /= distancia;
         direcao_y /= distancia;
 
 
         /*
-            O tiro nasce 30 pixels √† frente
-            do jogador para n√£o come√ßar dentro dele.
+            O tiro nasce 30 pixels ‡ frente
+            do jogador para n„o comeÁar dentro dele.
         */
 
         tiros[i].x =
@@ -116,7 +116,7 @@ void tiros_atualizar(
         }
 
 
-        // Move o tiro na dire√ß√£o em que foi disparado
+        // Move o tiro na direÁ„o em que foi disparado
         tiros[i].x +=
             tiros[i].direcao_x *
             tiros[i].velocidade;
@@ -154,8 +154,8 @@ void tiros_desenhar(
         }
 
 
-        // Por enquanto o tiro √© representado
-        // por um pequeno c√≠rculo amarelo.
+        // Por enquanto o tiro È representado
+        // por um pequeno cÌrculo amarelo.
         al_draw_filled_circle(
             tiros[i].x,
             tiros[i].y,

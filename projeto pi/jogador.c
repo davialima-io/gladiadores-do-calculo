@@ -7,14 +7,14 @@ void jogador_inicializar(
     Jogador* jogador
 )
 {
-    // Posi√ß√£o inicial do jogador
+    // PosiÁ„o inicial do jogador
     jogador->x = 375;
     jogador->y = 275;
 
     // Tamanho do quadrado que representa o jogador
     jogador->tamanho = 50;
 
-    // Velocidade de movimenta√ß√£o
+    // Velocidade de movimentaÁ„o
     jogador->velocidade = 5;
 }
 
@@ -24,8 +24,8 @@ void jogador_atualizar(
     ALLEGRO_KEYBOARD_STATE* estado_teclado
 )
 {
-    // Dire√ß√£o do movimento.
-    // Come√ßamos em zero porque o jogador pode ficar parado.
+    // DireÁ„o do movimento.
+    // ComeÁamos em zero porque o jogador pode ficar parado.
     float movimento_x = 0;
     float movimento_y = 0;
 
@@ -69,7 +69,7 @@ void jogador_atualizar(
     /*
         Normalizamos o movimento diagonal.
 
-        Sem isso, o jogador seria mais r√°pido
+        Sem isso, o jogador seria mais r·pido
         quando W+A, W+D, S+A ou S+D fossem usados
         ao mesmo tempo.
     */
@@ -130,7 +130,7 @@ void jogador_desenhar(
     Jogador* jogador
 )
 {
-    // Por enquanto o jogador √© representado
+    // Por enquanto o jogador È representado
     // por um quadrado branco.
     // Mais tarde podemos substituir por uma imagem.
     al_draw_filled_rectangle(
@@ -156,7 +156,7 @@ void jogador_desenhar_arma(
         jogador_centro_y(jogador);
 
 
-    // Calcula a dire√ß√£o entre o jogador e o mouse
+    // Calcula a direÁ„o entre o jogador e o mouse
     float direcao_x =
         mouse_x - centro_x;
 
@@ -164,28 +164,28 @@ void jogador_desenhar_arma(
         mouse_y - centro_y;
 
 
-    // Calcula a dist√¢ncia at√© o mouse
+    // Calcula a dist‚ncia atÈ o mouse
     float distancia = sqrt(
         direcao_x * direcao_x +
         direcao_y * direcao_y
     );
 
 
-    // Evita divis√£o por zero
+    // Evita divis„o por zero
     if (distancia == 0)
     {
         return;
     }
 
 
-    // Normaliza a dire√ß√£o
+    // Normaliza a direÁ„o
     direcao_x /= distancia;
     direcao_y /= distancia;
 
 
     /*
-        A arma come√ßa no centro do jogador
-        e se estende 35 pixels na dire√ß√£o do mouse.
+        A arma comeÁa no centro do jogador
+        e se estende 35 pixels na direÁ„o do mouse.
     */
 
     float arma_x =

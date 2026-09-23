@@ -1,10 +1,11 @@
+#pragma once
 #ifndef TIRO_H
 #define TIRO_H
 
 #include <stdbool.h>
 
 
-// Representa um projÃ©til disparado pelo jogador
+// Representa um projétil disparado pelo jogador
 typedef struct
 {
     float x;
@@ -26,7 +27,7 @@ void tiros_inicializar(
 );
 
 
-// Cria um novo tiro na direÃ§Ã£o do mouse
+// Cria um novo tiro na direção do mouse
 void tiro_disparar(
     Tiro tiros[],
     float jogador_x,
@@ -36,7 +37,7 @@ void tiro_disparar(
 );
 
 
-// Atualiza a posiÃ§Ã£o dos tiros
+// Atualiza a posição dos tiros
 void tiros_atualizar(
     Tiro tiros[]
 );

@@ -12,9 +12,9 @@
 int main(void)
 {
     /*
-    
+
         INICIALIZACAO DO ALLEGRO
-      
+
     */
 
     if (!al_init())
@@ -23,7 +23,7 @@ int main(void)
     }
 
 
-    // Permite desenhar ret√¢ngulos, c√≠rculos e linhas
+    // Permite desenhar ret‚ngulos, cÌrculos e linhas
 
     if (!al_init_primitives_addon())
     {
@@ -50,9 +50,9 @@ int main(void)
 
 
     /*
-      
+
         CRIACAO DA JANELA
-  
+
     */
 
     ALLEGRO_DISPLAY* tela =
@@ -68,11 +68,11 @@ int main(void)
 
 
     /*
- 
-        TIMER
-  
 
-        O jogo ser√° atualizado 60 vezes por segundo.
+        TIMER
+
+
+        O jogo ser· atualizado 60 vezes por segundo.
     */
 
     ALLEGRO_TIMER* timer =
@@ -87,9 +87,9 @@ int main(void)
 
 
     /*
-       
+
         FILA DE EVENTOS
-      
+
     */
 
     ALLEGRO_EVENT_QUEUE* fila_eventos =
@@ -105,9 +105,9 @@ int main(void)
 
 
     /*
-       
+
         REGISTRO DAS FONTES DE EVENTOS
-        
+
     */
 
     al_register_event_source(
@@ -132,9 +132,9 @@ int main(void)
 
 
     /*
-       
+
         FONTE
-       
+
     */
 
     ALLEGRO_FONT* fonte =
@@ -151,9 +151,9 @@ int main(void)
 
 
     /*
-        
+
         OBJETOS DO JOGO
-        
+
     */
 
     Jogador jogador;
@@ -172,18 +172,18 @@ int main(void)
 
 
     /*
-      
+
         ESTADO DO TECLADO
-       
+
     */
 
     ALLEGRO_KEYBOARD_STATE estado_teclado;
 
 
     /*
-       
+
         POSICAO DO MOUSE
-        
+
     */
 
     float mouse_x =
@@ -194,9 +194,9 @@ int main(void)
 
 
     /*
-        
+
         ESTADO DO JOGO
-        
+
 
         true  = menu
         false = partida
@@ -208,9 +208,9 @@ int main(void)
 
 
     /*
-        
+
         INICIA O TIMER
-       
+
     */
 
     al_start_timer(timer);
@@ -218,7 +218,7 @@ int main(void)
 
     /*
         LOOP PRINCIPAL
-       
+
     */
 
     while (executando)
@@ -226,7 +226,7 @@ int main(void)
         ALLEGRO_EVENT evento;
 
 
-        // Espera at√© acontecer algum evento
+        // Espera atÈ acontecer algum evento
         al_wait_for_event(
             fila_eventos,
             &evento
@@ -234,9 +234,9 @@ int main(void)
 
 
         /*
-            
+
             FECHAR JANELA
-            
+
         */
 
         if (evento.type ==
@@ -247,9 +247,9 @@ int main(void)
 
 
         /*
-            
+
             MOVIMENTO DO MOUSE
-           
+
         */
 
         if (evento.type ==
@@ -261,9 +261,9 @@ int main(void)
 
 
         /*
-            
+
             CLIQUE DO MOUSE
-            
+
         */
 
         if (evento.type ==
@@ -314,9 +314,9 @@ int main(void)
 
 
         /*
-           
+
             TECLADO
-            
+
         */
 
         if (evento.type ==
@@ -339,9 +339,9 @@ int main(void)
 
 
         /*
-           
+
             ATUALIZACAO DO JOGO
-            
+
         */
 
         if (evento.type ==
@@ -349,7 +349,7 @@ int main(void)
         {
             /*
                 Se estamos no menu,
-                n√£o atualizamos os objetos.
+                n„o atualizamos os objetos.
             */
 
             if (no_menu)
@@ -361,9 +361,9 @@ int main(void)
 
 
             /*
-               
+
                 JOGADOR
-               
+
             */
 
             al_get_keyboard_state(
@@ -377,18 +377,18 @@ int main(void)
 
 
             /*
-                
+
                 TIROS
-               
+
             */
 
             tiros_atualizar(tiros);
 
 
             /*
-              
+
                 INIMIGO
-           
+
             */
 
             inimigo_atualizar(
@@ -397,16 +397,16 @@ int main(void)
 
 
             /*
-              
+
                 COLISAO ENTRE TIROS E INIMIGO
-            
+
             */
 
             for (int i = 0;
                 i < MAX_TIROS;
                 i++)
             {
-                // Ignora espa√ßos vazios do vetor
+                // Ignora espaÁos vazios do vetor
                 if (!tiros[i].ativo)
                 {
                     continue;
@@ -432,9 +432,9 @@ int main(void)
 
 
             /*
-               
+
                 DESENHO DA ARENA
-             
+
             */
 
             al_clear_to_color(
@@ -443,9 +443,9 @@ int main(void)
 
 
             /*
-                
+
                 JOGADOR
-               
+
             */
 
             jogador_desenhar(
@@ -454,9 +454,9 @@ int main(void)
 
 
             /*
-               
+
                 ARMA
-                
+
             */
 
             jogador_desenhar_arma(
@@ -467,9 +467,9 @@ int main(void)
 
 
             /*
-              
+
                 TIROS
-                
+
             */
 
             tiros_desenhar(
@@ -478,9 +478,9 @@ int main(void)
 
 
             /*
-                
+
                 INIMIGO
-                
+
             */
 
             inimigo_desenhar(
@@ -498,9 +498,9 @@ int main(void)
 
 
     /*
-        
+
         FINALIZACAO
-      
+
     */
 
     al_destroy_font(fonte);

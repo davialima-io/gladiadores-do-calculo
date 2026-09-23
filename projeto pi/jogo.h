@@ -1,3 +1,4 @@
+#pragma once
 #ifndef JOGO_H
 #define JOGO_H
 
@@ -7,7 +8,7 @@
 #define ALTURA_TELA 600
 
 
-// Quantidade m√°xima de tiros que podem existir ao mesmo tempo
+// Quantidade m·xima de tiros que podem existir ao mesmo tempo
 #define MAX_TIROS 50
 
 

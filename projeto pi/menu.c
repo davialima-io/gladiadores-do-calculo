@@ -54,7 +54,7 @@ void menu_desenhar(
     float botao_y2 = 370;
 
 
-    // Fundo do botÃ£o
+    // Fundo do botão
     al_draw_filled_rectangle(
         botao_x1,
         botao_y1,
@@ -64,7 +64,7 @@ void menu_desenhar(
     );
 
 
-    // Borda do botÃ£o
+    // Borda do botão
     al_draw_rectangle(
         botao_x1,
         botao_y1,
@@ -75,7 +75,7 @@ void menu_desenhar(
     );
 
 
-    // Texto do botÃ£o
+    // Texto do botão
     al_draw_text(
         fonte,
         al_map_rgb(255, 255, 255),
@@ -112,7 +112,7 @@ bool menu_clicou_start(
 {
     /*
         Verifica se o clique aconteceu
-        dentro dos limites do botÃ£o.
+        dentro dos limites do botão.
     */
 
     if (mouse_x >= 300 &&
