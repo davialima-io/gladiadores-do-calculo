@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -82,6 +82,7 @@
     <Allegro_AddonFont>true</Allegro_AddonFont>
     <Allegro_AddonColor>true</Allegro_AddonColor>
     <Allegro_AddonVideo>true</Allegro_AddonVideo>
+    <IncludePath>C:\Users\Davi\source\repos\gladiadores-do-calculo\packages\AllegroDeps.1.16.0\build\native\include;C:\Users\Davi\source\repos\davialima-io\gladiadores-do-calculo\packages\Allegro.5.2.11.3;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,9 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="fundo.c" />
     <ClCompile Include="inimigo.c" />
     <ClCompile Include="jogador.c" />
     <ClCompile Include="jogo.c" />
@@ -151,11 +150,258 @@
     <ClCompile Include="tiro.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fundo.h" />
     <ClInclude Include="inimigo.h" />
     <ClInclude Include="jogador.h" />
     <ClInclude Include="jogo.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="tiro.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="fundo_frames\frame_0001.jpg" />
+    <Image Include="fundo_frames\frame_0002.jpg" />
+    <Image Include="fundo_frames\frame_0003.jpg" />
+    <Image Include="fundo_frames\frame_0004.jpg" />
+    <Image Include="fundo_frames\frame_0005.jpg" />
+    <Image Include="fundo_frames\frame_0006.jpg" />
+    <Image Include="fundo_frames\frame_0007.jpg" />
+    <Image Include="fundo_frames\frame_0008.jpg" />
+    <Image Include="fundo_frames\frame_0009.jpg" />
+    <Image Include="fundo_frames\frame_0010.jpg" />
+    <Image Include="fundo_frames\frame_0011.jpg" />
+    <Image Include="fundo_frames\frame_0012.jpg" />
+    <Image Include="fundo_frames\frame_0013.jpg" />
+    <Image Include="fundo_frames\frame_0014.jpg" />
+    <Image Include="fundo_frames\frame_0015.jpg" />
+    <Image Include="fundo_frames\frame_0016.jpg" />
+    <Image Include="fundo_frames\frame_0017.jpg" />
+    <Image Include="fundo_frames\frame_0018.jpg" />
+    <Image Include="fundo_frames\frame_0019.jpg" />
+    <Image Include="fundo_frames\frame_0020.jpg" />
+    <Image Include="fundo_frames\frame_0021.jpg" />
+    <Image Include="fundo_frames\frame_0022.jpg" />
+    <Image Include="fundo_frames\frame_0023.jpg" />
+    <Image Include="fundo_frames\frame_0024.jpg" />
+    <Image Include="fundo_frames\frame_0025.jpg" />
+    <Image Include="fundo_frames\frame_0026.jpg" />
+    <Image Include="fundo_frames\frame_0027.jpg" />
+    <Image Include="fundo_frames\frame_0028.jpg" />
+    <Image Include="fundo_frames\frame_0029.jpg" />
+    <Image Include="fundo_frames\frame_0030.jpg" />
+    <Image Include="fundo_frames\frame_0031.jpg" />
+    <Image Include="fundo_frames\frame_0032.jpg" />
+    <Image Include="fundo_frames\frame_0033.jpg" />
+    <Image Include="fundo_frames\frame_0034.jpg" />
+    <Image Include="fundo_frames\frame_0035.jpg" />
+    <Image Include="fundo_frames\frame_0036.jpg" />
+    <Image Include="fundo_frames\frame_0037.jpg" />
+    <Image Include="fundo_frames\frame_0038.jpg" />
+    <Image Include="fundo_frames\frame_0039.jpg" />
+    <Image Include="fundo_frames\frame_0040.jpg" />
+    <Image Include="fundo_frames\frame_0041.jpg" />
+    <Image Include="fundo_frames\frame_0042.jpg" />
+    <Image Include="fundo_frames\frame_0043.jpg" />
+    <Image Include="fundo_frames\frame_0044.jpg" />
+    <Image Include="fundo_frames\frame_0045.jpg" />
+    <Image Include="fundo_frames\frame_0046.jpg" />
+    <Image Include="fundo_frames\frame_0047.jpg" />
+    <Image Include="fundo_frames\frame_0048.jpg" />
+    <Image Include="fundo_frames\frame_0049.jpg" />
+    <Image Include="fundo_frames\frame_0050.jpg" />
+    <Image Include="fundo_frames\frame_0051.jpg" />
+    <Image Include="fundo_frames\frame_0052.jpg" />
+    <Image Include="fundo_frames\frame_0053.jpg" />
+    <Image Include="fundo_frames\frame_0054.jpg" />
+    <Image Include="fundo_frames\frame_0055.jpg" />
+    <Image Include="fundo_frames\frame_0056.jpg" />
+    <Image Include="fundo_frames\frame_0057.jpg" />
+    <Image Include="fundo_frames\frame_0058.jpg" />
+    <Image Include="fundo_frames\frame_0059.jpg" />
+    <Image Include="fundo_frames\frame_0060.jpg" />
+    <Image Include="fundo_frames\frame_0061.jpg" />
+    <Image Include="fundo_frames\frame_0062.jpg" />
+    <Image Include="fundo_frames\frame_0063.jpg" />
+    <Image Include="fundo_frames\frame_0064.jpg" />
+    <Image Include="fundo_frames\frame_0065.jpg" />
+    <Image Include="fundo_frames\frame_0066.jpg" />
+    <Image Include="fundo_frames\frame_0067.jpg" />
+    <Image Include="fundo_frames\frame_0068.jpg" />
+    <Image Include="fundo_frames\frame_0069.jpg" />
+    <Image Include="fundo_frames\frame_0070.jpg" />
+    <Image Include="fundo_frames\frame_0071.jpg" />
+    <Image Include="fundo_frames\frame_0072.jpg" />
+    <Image Include="fundo_frames\frame_0073.jpg" />
+    <Image Include="fundo_frames\frame_0074.jpg" />
+    <Image Include="fundo_frames\frame_0075.jpg" />
+    <Image Include="fundo_frames\frame_0076.jpg" />
+    <Image Include="fundo_frames\frame_0077.jpg" />
+    <Image Include="fundo_frames\frame_0078.jpg" />
+    <Image Include="fundo_frames\frame_0079.jpg" />
+    <Image Include="fundo_frames\frame_0080.jpg" />
+    <Image Include="fundo_frames\frame_0081.jpg" />
+    <Image Include="fundo_frames\frame_0082.jpg" />
+    <Image Include="fundo_frames\frame_0083.jpg" />
+    <Image Include="fundo_frames\frame_0084.jpg" />
+    <Image Include="fundo_frames\frame_0085.jpg" />
+    <Image Include="fundo_frames\frame_0086.jpg" />
+    <Image Include="fundo_frames\frame_0087.jpg" />
+    <Image Include="fundo_frames\frame_0088.jpg" />
+    <Image Include="fundo_frames\frame_0089.jpg" />
+    <Image Include="fundo_frames\frame_0090.jpg" />
+    <Image Include="fundo_frames\frame_0091.jpg" />
+    <Image Include="fundo_frames\frame_0092.jpg" />
+    <Image Include="fundo_frames\frame_0093.jpg" />
+    <Image Include="fundo_frames\frame_0094.jpg" />
+    <Image Include="fundo_frames\frame_0095.jpg" />
+    <Image Include="fundo_frames\frame_0096.jpg" />
+    <Image Include="fundo_frames\frame_0097.jpg" />
+    <Image Include="fundo_frames\frame_0098.jpg" />
+    <Image Include="fundo_frames\frame_0099.jpg" />
+    <Image Include="fundo_frames\frame_0100.jpg" />
+    <Image Include="fundo_frames\frame_0101.jpg" />
+    <Image Include="fundo_frames\frame_0102.jpg" />
+    <Image Include="fundo_frames\frame_0103.jpg" />
+    <Image Include="fundo_frames\frame_0104.jpg" />
+    <Image Include="fundo_frames\frame_0105.jpg" />
+    <Image Include="fundo_frames\frame_0106.jpg" />
+    <Image Include="fundo_frames\frame_0107.jpg" />
+    <Image Include="fundo_frames\frame_0108.jpg" />
+    <Image Include="fundo_frames\frame_0109.jpg" />
+    <Image Include="fundo_frames\frame_0110.jpg" />
+    <Image Include="fundo_frames\frame_0111.jpg" />
+    <Image Include="fundo_frames\frame_0112.jpg" />
+    <Image Include="fundo_frames\frame_0113.jpg" />
+    <Image Include="fundo_frames\frame_0114.jpg" />
+    <Image Include="fundo_frames\frame_0115.jpg" />
+    <Image Include="fundo_frames\frame_0116.jpg" />
+    <Image Include="fundo_frames\frame_0117.jpg" />
+    <Image Include="fundo_frames\frame_0118.jpg" />
+    <Image Include="fundo_frames\frame_0119.jpg" />
+    <Image Include="fundo_frames\frame_0120.jpg" />
+    <Image Include="fundo_frames\frame_0121.jpg" />
+    <Image Include="fundo_frames\frame_0122.jpg" />
+    <Image Include="fundo_frames\frame_0123.jpg" />
+    <Image Include="fundo_frames\frame_0124.jpg" />
+    <Image Include="fundo_frames\frame_0125.jpg" />
+    <Image Include="fundo_frames\frame_0126.jpg" />
+    <Image Include="fundo_frames\frame_0127.jpg" />
+    <Image Include="fundo_frames\frame_0128.jpg" />
+    <Image Include="fundo_frames\frame_0129.jpg" />
+    <Image Include="fundo_frames\frame_0130.jpg" />
+    <Image Include="fundo_frames\frame_0131.jpg" />
+    <Image Include="fundo_frames\frame_0132.jpg" />
+    <Image Include="fundo_frames\frame_0133.jpg" />
+    <Image Include="fundo_frames\frame_0134.jpg" />
+    <Image Include="fundo_frames\frame_0135.jpg" />
+    <Image Include="fundo_frames\frame_0136.jpg" />
+    <Image Include="fundo_frames\frame_0137.jpg" />
+    <Image Include="fundo_frames\frame_0138.jpg" />
+    <Image Include="fundo_frames\frame_0139.jpg" />
+    <Image Include="fundo_frames\frame_0140.jpg" />
+    <Image Include="fundo_frames\frame_0141.jpg" />
+    <Image Include="fundo_frames\frame_0142.jpg" />
+    <Image Include="fundo_frames\frame_0143.jpg" />
+    <Image Include="fundo_frames\frame_0144.jpg" />
+    <Image Include="fundo_frames\frame_0145.jpg" />
+    <Image Include="fundo_frames\frame_0146.jpg" />
+    <Image Include="fundo_frames\frame_0147.jpg" />
+    <Image Include="fundo_frames\frame_0148.jpg" />
+    <Image Include="fundo_frames\frame_0149.jpg" />
+    <Image Include="fundo_frames\frame_0150.jpg" />
+    <Image Include="fundo_frames\frame_0151.jpg" />
+    <Image Include="fundo_frames\frame_0152.jpg" />
+    <Image Include="fundo_frames\frame_0153.jpg" />
+    <Image Include="fundo_frames\frame_0154.jpg" />
+    <Image Include="fundo_frames\frame_0155.jpg" />
+    <Image Include="fundo_frames\frame_0156.jpg" />
+    <Image Include="fundo_frames\frame_0157.jpg" />
+    <Image Include="fundo_frames\frame_0158.jpg" />
+    <Image Include="fundo_frames\frame_0159.jpg" />
+    <Image Include="fundo_frames\frame_0160.jpg" />
+    <Image Include="fundo_frames\frame_0161.jpg" />
+    <Image Include="fundo_frames\frame_0162.jpg" />
+    <Image Include="fundo_frames\frame_0163.jpg" />
+    <Image Include="fundo_frames\frame_0164.jpg" />
+    <Image Include="fundo_frames\frame_0165.jpg" />
+    <Image Include="fundo_frames\frame_0166.jpg" />
+    <Image Include="fundo_frames\frame_0167.jpg" />
+    <Image Include="fundo_frames\frame_0168.jpg" />
+    <Image Include="fundo_frames\frame_0169.jpg" />
+    <Image Include="fundo_frames\frame_0170.jpg" />
+    <Image Include="fundo_frames\frame_0171.jpg" />
+    <Image Include="fundo_frames\frame_0172.jpg" />
+    <Image Include="fundo_frames\frame_0173.jpg" />
+    <Image Include="fundo_frames\frame_0174.jpg" />
+    <Image Include="fundo_frames\frame_0175.jpg" />
+    <Image Include="fundo_frames\frame_0176.jpg" />
+    <Image Include="fundo_frames\frame_0177.jpg" />
+    <Image Include="fundo_frames\frame_0178.jpg" />
+    <Image Include="fundo_frames\frame_0179.jpg" />
+    <Image Include="fundo_frames\frame_0180.jpg" />
+    <Image Include="fundo_frames\frame_0181.jpg" />
+    <Image Include="fundo_frames\frame_0182.jpg" />
+    <Image Include="fundo_frames\frame_0183.jpg" />
+    <Image Include="fundo_frames\frame_0184.jpg" />
+    <Image Include="fundo_frames\frame_0185.jpg" />
+    <Image Include="fundo_frames\frame_0186.jpg" />
+    <Image Include="fundo_frames\frame_0187.jpg" />
+    <Image Include="fundo_frames\frame_0188.jpg" />
+    <Image Include="fundo_frames\frame_0189.jpg" />
+    <Image Include="fundo_frames\frame_0190.jpg" />
+    <Image Include="fundo_frames\frame_0191.jpg" />
+    <Image Include="fundo_frames\frame_0192.jpg" />
+    <Image Include="fundo_frames\frame_0193.jpg" />
+    <Image Include="fundo_frames\frame_0194.jpg" />
+    <Image Include="fundo_frames\frame_0195.jpg" />
+    <Image Include="fundo_frames\frame_0196.jpg" />
+    <Image Include="fundo_frames\frame_0197.jpg" />
+    <Image Include="fundo_frames\frame_0198.jpg" />
+    <Image Include="fundo_frames\frame_0199.jpg" />
+    <Image Include="fundo_frames\frame_0200.jpg" />
+    <Image Include="fundo_frames\frame_0201.jpg" />
+    <Image Include="fundo_frames\frame_0202.jpg" />
+    <Image Include="fundo_frames\frame_0203.jpg" />
+    <Image Include="fundo_frames\frame_0204.jpg" />
+    <Image Include="fundo_frames\frame_0205.jpg" />
+    <Image Include="fundo_frames\frame_0206.jpg" />
+    <Image Include="fundo_frames\frame_0207.jpg" />
+    <Image Include="fundo_frames\frame_0208.jpg" />
+    <Image Include="fundo_frames\frame_0209.jpg" />
+    <Image Include="fundo_frames\frame_0210.jpg" />
+    <Image Include="fundo_frames\frame_0211.jpg" />
+    <Image Include="fundo_frames\frame_0212.jpg" />
+    <Image Include="fundo_frames\frame_0213.jpg" />
+    <Image Include="fundo_frames\frame_0214.jpg" />
+    <Image Include="fundo_frames\frame_0215.jpg" />
+    <Image Include="fundo_frames\frame_0216.jpg" />
+    <Image Include="fundo_frames\frame_0217.jpg" />
+    <Image Include="fundo_frames\frame_0218.jpg" />
+    <Image Include="fundo_frames\frame_0219.jpg" />
+    <Image Include="fundo_frames\frame_0220.jpg" />
+    <Image Include="fundo_frames\frame_0221.jpg" />
+    <Image Include="fundo_frames\frame_0222.jpg" />
+    <Image Include="fundo_frames\frame_0223.jpg" />
+    <Image Include="fundo_frames\frame_0224.jpg" />
+    <Image Include="fundo_frames\frame_0225.jpg" />
+    <Image Include="fundo_frames\frame_0226.jpg" />
+    <Image Include="fundo_frames\frame_0227.jpg" />
+    <Image Include="fundo_frames\frame_0228.jpg" />
+    <Image Include="fundo_frames\frame_0229.jpg" />
+    <Image Include="fundo_frames\frame_0230.jpg" />
+    <Image Include="fundo_frames\frame_0231.jpg" />
+    <Image Include="fundo_frames\frame_0232.jpg" />
+    <Image Include="fundo_frames\frame_0233.jpg" />
+    <Image Include="fundo_frames\frame_0234.jpg" />
+    <Image Include="fundo_frames\frame_0235.jpg" />
+    <Image Include="fundo_frames\frame_0236.jpg" />
+    <Image Include="fundo_frames\frame_0237.jpg" />
+    <Image Include="fundo_frames\frame_0238.jpg" />
+    <Image Include="fundo_frames\frame_0239.jpg" />
+    <Image Include="fundo_frames\frame_0240.jpg" />
+    <Image Include="fundo_frames\Image.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

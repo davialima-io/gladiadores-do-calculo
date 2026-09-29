@@ -7,14 +7,12 @@
 #include "tiro.h"
 #include "inimigo.h"
 #include "menu.h"
-
+#include "fundo.h"
 
 int main(void)
 {
     /*
-
         INICIALIZACAO DO ALLEGRO
-
     */
 
     if (!al_init())
@@ -24,7 +22,6 @@ int main(void)
 
 
     // Permite desenhar retângulos, círculos e linhas
-
     if (!al_init_primitives_addon())
     {
         return 1;
@@ -50,9 +47,7 @@ int main(void)
 
 
     /*
-
         CRIACAO DA JANELA
-
     */
 
     ALLEGRO_DISPLAY* tela =
@@ -68,9 +63,21 @@ int main(void)
 
 
     /*
+        FUNDO
 
+        Carrega a imagem da arena.
+    */
+
+    if (!fundo_inicializar())
+    {
+        al_destroy_display(tela);
+
+        return 1;
+    }
+
+
+    /*
         TIMER
-
 
         O jogo será atualizado 60 vezes por segundo.
     */
@@ -80,6 +87,8 @@ int main(void)
 
     if (!timer)
     {
+        fundo_finalizar();
+
         al_destroy_display(tela);
 
         return 1;
@@ -87,9 +96,7 @@ int main(void)
 
 
     /*
-
         FILA DE EVENTOS
-
     */
 
     ALLEGRO_EVENT_QUEUE* fila_eventos =
@@ -98,6 +105,9 @@ int main(void)
     if (!fila_eventos)
     {
         al_destroy_timer(timer);
+
+        fundo_finalizar();
+
         al_destroy_display(tela);
 
         return 1;
@@ -105,9 +115,7 @@ int main(void)
 
 
     /*
-
         REGISTRO DAS FONTES DE EVENTOS
-
     */
 
     al_register_event_source(
@@ -132,9 +140,7 @@ int main(void)
 
 
     /*
-
         FONTE
-
     */
 
     ALLEGRO_FONT* fonte =
@@ -143,7 +149,11 @@ int main(void)
     if (!fonte)
     {
         al_destroy_event_queue(fila_eventos);
+
         al_destroy_timer(timer);
+
+        fundo_finalizar();
+
         al_destroy_display(tela);
 
         return 1;
@@ -151,9 +161,7 @@ int main(void)
 
 
     /*
-
         OBJETOS DO JOGO
-
     */
 
     Jogador jogador;
@@ -172,18 +180,14 @@ int main(void)
 
 
     /*
-
         ESTADO DO TECLADO
-
     */
 
     ALLEGRO_KEYBOARD_STATE estado_teclado;
 
 
     /*
-
         POSICAO DO MOUSE
-
     */
 
     float mouse_x =
@@ -194,9 +198,7 @@ int main(void)
 
 
     /*
-
         ESTADO DO JOGO
-
 
         true  = menu
         false = partida
@@ -208,9 +210,7 @@ int main(void)
 
 
     /*
-
         INICIA O TIMER
-
     */
 
     al_start_timer(timer);
@@ -218,7 +218,6 @@ int main(void)
 
     /*
         LOOP PRINCIPAL
-
     */
 
     while (executando)
@@ -234,9 +233,7 @@ int main(void)
 
 
         /*
-
             FECHAR JANELA
-
         */
 
         if (evento.type ==
@@ -247,9 +244,7 @@ int main(void)
 
 
         /*
-
             MOVIMENTO DO MOUSE
-
         */
 
         if (evento.type ==
@@ -261,9 +256,7 @@ int main(void)
 
 
         /*
-
             CLIQUE DO MOUSE
-
         */
 
         if (evento.type ==
@@ -314,9 +307,7 @@ int main(void)
 
 
         /*
-
             TECLADO
-
         */
 
         if (evento.type ==
@@ -339,9 +330,7 @@ int main(void)
 
 
         /*
-
             ATUALIZACAO DO JOGO
-
         */
 
         if (evento.type ==
@@ -361,9 +350,7 @@ int main(void)
 
 
             /*
-
                 JOGADOR
-
             */
 
             al_get_keyboard_state(
@@ -377,18 +364,14 @@ int main(void)
 
 
             /*
-
                 TIROS
-
             */
 
             tiros_atualizar(tiros);
 
 
             /*
-
                 INIMIGO
-
             */
 
             inimigo_atualizar(
@@ -397,9 +380,7 @@ int main(void)
 
 
             /*
-
                 COLISAO ENTRE TIROS E INIMIGO
-
             */
 
             for (int i = 0;
@@ -432,20 +413,34 @@ int main(void)
 
 
             /*
+     /*
+    FUNDO ANIMADO
 
-                DESENHO DA ARENA
+    Atualiza o frame da animação.
+*/
 
-            */
+/*
+FUNDO ANIMADO
 
-            al_clear_to_color(
-                al_map_rgb(30, 30, 30)
-            );
+Atualiza o frame da animação.
+*/
+
+            fundo_atualizar();
 
 
             /*
+                DESENHO DA ARENA
 
+                O fundo é desenhado primeiro,
+                para que os outros objetos
+                apareçam por cima dele.
+            */
+
+            fundo_desenhar();
+
+
+            /*
                 JOGADOR
-
             */
 
             jogador_desenhar(
@@ -454,9 +449,7 @@ int main(void)
 
 
             /*
-
                 ARMA
-
             */
 
             jogador_desenhar_arma(
@@ -467,9 +460,7 @@ int main(void)
 
 
             /*
-
                 TIROS
-
             */
 
             tiros_desenhar(
@@ -478,9 +469,7 @@ int main(void)
 
 
             /*
-
                 INIMIGO
-
             */
 
             inimigo_desenhar(
@@ -498,9 +487,7 @@ int main(void)
 
 
     /*
-
         FINALIZACAO
-
     */
 
     al_destroy_font(fonte);
@@ -510,6 +497,9 @@ int main(void)
     );
 
     al_destroy_timer(timer);
+
+    // Libera a imagem do fundo
+    fundo_finalizar();
 
     al_destroy_display(tela);
 

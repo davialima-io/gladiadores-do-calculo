@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="inimigo.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
@@ -34,6 +31,9 @@
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
     <ClCompile Include="tiro.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="fundo.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,5 +53,736 @@
     <ClInclude Include="jogador.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="fundo.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="fundo_frames\Image.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0001.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0002.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0003.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0004.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0005.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0006.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0007.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0008.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0009.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0010.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0011.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0012.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0013.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0014.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0015.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0016.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0017.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0018.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0019.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0020.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0021.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0022.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0023.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0024.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0025.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0026.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0027.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0028.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0029.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0030.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0031.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0032.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0033.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0034.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0035.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0036.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0037.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0038.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0039.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0040.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0041.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0042.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0043.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0044.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0045.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0046.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0047.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0048.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0049.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0050.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0051.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0052.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0053.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0054.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0055.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0056.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0057.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0058.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0059.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0060.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0061.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0062.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0063.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0064.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0065.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0066.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0067.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0068.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0069.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0070.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0071.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0072.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0073.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0074.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0075.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0076.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0077.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0078.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0079.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0080.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0081.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0082.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0083.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0084.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0085.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0086.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0087.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0088.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0089.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0090.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0091.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0092.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0093.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0094.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0095.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0096.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0097.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0098.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0099.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0100.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0101.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0102.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0103.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0104.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0105.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0106.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0107.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0108.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0109.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0110.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0111.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0112.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0113.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0114.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0115.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0116.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0117.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0118.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0119.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0120.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0121.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0122.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0123.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0124.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0125.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0126.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0127.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0128.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0129.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0130.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0131.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0132.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0133.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0134.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0135.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0136.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0137.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0138.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0139.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0140.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0141.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0142.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0143.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0144.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0145.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0146.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0147.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0148.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0149.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0150.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0151.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0152.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0153.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0154.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0155.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0156.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0157.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0158.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0159.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0160.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0161.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0162.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0163.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0164.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0165.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0166.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0167.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0168.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0169.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0170.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0171.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0172.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0173.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0174.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0175.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0176.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0177.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0178.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0179.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0180.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0181.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0182.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0183.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0184.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0185.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0186.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0187.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0188.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0189.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0190.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0191.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0192.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0193.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0194.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0195.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0196.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0197.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0198.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0199.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0200.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0201.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0202.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0203.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0204.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0205.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0206.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0207.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0208.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0209.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0210.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0211.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0212.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0213.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0214.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0215.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0216.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0217.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0218.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0219.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0220.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0221.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0222.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0223.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0224.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0225.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0226.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0227.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0228.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0229.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0230.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0231.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0232.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0233.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0234.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0235.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0236.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0237.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0238.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0239.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+    <Image Include="fundo_frames\frame_0240.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
   </ItemGroup>
 </Project>
