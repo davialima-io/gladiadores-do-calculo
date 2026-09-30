@@ -10,7 +10,7 @@
 /* QUANTIDADE DE FRAMES Nossa animação possui 240 imagens*/
 #define TOTAL_FRAMES 60
 /* FPS DA ANIMAÇÃO O jogo continua rodando a 60 FPS, mas o fundo troca de imagem 30 vezes por segundo*/
-#define FPS_FUNDO 60.0
+#define FPS_FUNDO 30.0
 /* FRAME ATUAL  Guarda a imagem que está sendo desenhada*/
 static ALLEGRO_BITMAP* frame_atual = NULL;
 /* NUMERO DO FRAME Começa no frame 0 */
