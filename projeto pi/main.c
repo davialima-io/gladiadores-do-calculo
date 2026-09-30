@@ -536,6 +536,5 @@ int main(void)
     al_destroy_font(fonte_equacao);
     al_destroy_font(fonte);
 
-
     return 0;
 }
