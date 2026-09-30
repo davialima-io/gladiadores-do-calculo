@@ -1,13 +1,14 @@
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-
 #include "jogo.h"
 #include "jogador.h"
 #include "tiro.h"
 #include "inimigo.h"
 #include "menu.h"
 #include "fundo.h"
+#include "equacao.h"
+#include <time.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
 
 int main(void)
 {
@@ -20,6 +21,7 @@ int main(void)
         return 1;
     }
 
+   srand((unsigned)time(NULL));//gera num aleatório pra equação
 
     // Permite desenhar retângulos, círculos e linhas
     if (!al_init_primitives_addon())
@@ -44,6 +46,11 @@ int main(void)
 
     // Inicializa o sistema de fontes
     al_init_font_addon();
+
+    if (!al_init_ttf_addon())
+    {
+        return 1;
+    }
 
 
     /*
@@ -158,6 +165,22 @@ int main(void)
 
         return 1;
     }
+    ALLEGRO_FONT* fonte_equacao = al_load_ttf_font("C:/Windows/Fonts/arial.ttf", 20, 0);
+
+    if (!fonte_equacao)
+    {
+        al_destroy_font(fonte);
+
+        al_destroy_event_queue(fila_eventos);
+
+        al_destroy_timer(timer);
+
+        fundo_finalizar();
+
+        al_destroy_display(tela);
+
+        return 1;
+    }
 
 
     /*
@@ -170,6 +193,8 @@ int main(void)
 
     Inimigo inimigo;
 
+    Equacao equacao; // ADD: Declaração do objeto equação
+
 
     // Inicializa cada objeto
     jogador_inicializar(&jogador);
@@ -177,6 +202,8 @@ int main(void)
     tiros_inicializar(tiros);
 
     inimigo_inicializar(&inimigo);
+
+    equacao_gerar_nova(&equacao); // ADD: Gera a primeira equação ao iniciar
 
 
     /*
@@ -333,9 +360,7 @@ int main(void)
             ATUALIZACAO DO JOGO
         */
 
-        if (evento.type ==
-            ALLEGRO_EVENT_TIMER)
-        {
+        if (evento.type == ALLEGRO_EVENT_TIMER){
             /*
                 Se estamos no menu,
                 não atualizamos os objetos.
@@ -411,19 +436,11 @@ int main(void)
                 }
             }
 
-
             /*
-     /*
-    FUNDO ANIMADO
+                FUNDO ANIMADO
 
-    Atualiza o frame da animação.
-*/
-
-/*
-FUNDO ANIMADO
-
-Atualiza o frame da animação.
-*/
+                Atualiza o frame da animação.
+            */
 
             fundo_atualizar();
 
@@ -438,8 +455,18 @@ Atualiza o frame da animação.
 
             fundo_desenhar();
 
+            /* EQUACAO - Desenha a equação no meio da tela por cima de tudo
+            */
 
-            /*
+            equacao_desenhar(
+                &equacao,
+                fonte_equacao,   // era "fonte"
+                LARGURA_TELA,
+                ALTURA_TELA
+            );
+
+
+            /* 
                 JOGADOR
             */
 
@@ -477,6 +504,9 @@ Atualiza o frame da animação.
             );
 
 
+            
+
+
             /*
                 Mostra o frame completo na tela.
             */
@@ -502,6 +532,9 @@ Atualiza o frame da animação.
     fundo_finalizar();
 
     al_destroy_display(tela);
+
+    al_destroy_font(fonte_equacao);
+    al_destroy_font(fonte);
 
 
     return 0;
