@@ -157,6 +157,9 @@
     <ClInclude Include="menu.h" />
     <ClInclude Include="tiro.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="menu_fundo.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\AllegroDeps.1.16.0\build\native\AllegroDeps.targets" Condition="Exists('..\packages\AllegroDeps.1.16.0\build\native\AllegroDeps.targets')" />
