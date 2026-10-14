@@ -11,6 +11,7 @@ void equacao_gerar_nova(Equacao* eq) {
 
     printf("sorteio = %d\n", sorteio);
 
+    //50% de soma
     if (sorteio< 50) {
         // Dois números aleatórios entre 1 e 20
         eq->num1 = (rand() % 20) + 1;
@@ -43,7 +44,6 @@ void equacao_gerar_nova(Equacao* eq) {
 }
 
 // Posição e tamanho do quadro (proporções da tela).
-// Ajuste esses valores até cobrir a bandeira.
 #define QUADRO_CENTRO_X  0.50f
 #define QUADRO_CENTRO_Y  0.334f
 #define QUADRO_LARGURA   0.17f
@@ -73,12 +73,5 @@ void equacao_desenhar(const Equacao* eq, ALLEGRO_FONT* fonte, int largura_tela, 
 
     // Texto centralizado no quadro
     int altura_fonte = al_get_font_line_height(fonte);
-    al_draw_text(
-        fonte,
-        al_map_rgb(221, 144, 54),
-        cx,
-        cy - altura_fonte / 2.0f,
-        ALLEGRO_ALIGN_CENTER,
-        eq->texto
-    );
+    al_draw_text(fonte, al_map_rgb(221, 144, 54), cx, cy - altura_fonte / 2.0f, ALLEGRO_ALIGN_CENTER, eq->texto);
 }
