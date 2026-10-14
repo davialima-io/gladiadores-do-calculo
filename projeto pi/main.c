@@ -1,16 +1,17 @@
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-
 #include "jogo.h"
 #include "jogador.h"
 #include "tiro.h"
 #include "inimigo.h"
 #include "menu.h"
 #include "fundo.h"
+#include "equacao.h"
+#include <time.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
+#include "alternativa.h"
 
-int main(void)
-{
+int main(void){
     /*
         INICIALIZACAO DO ALLEGRO
     */
@@ -20,6 +21,7 @@ int main(void)
         return 1;
     }
 
+   srand((unsigned)time(NULL));//gera num aleatório pra equação
 
     // Permite desenhar retângulos, círculos e linhas
     if (!al_init_primitives_addon())
@@ -44,6 +46,11 @@ int main(void)
 
     // Inicializa o sistema de fontes
     al_init_font_addon();
+
+    if (!al_init_ttf_addon())
+    {
+        return 1;
+    }
 
 
     /*
@@ -158,25 +165,46 @@ int main(void)
 
         return 1;
     }
+    ALLEGRO_FONT* fonte_equacao = al_load_ttf_font("C:/Windows/Fonts/arial.ttf", 20, 0);
+
+    if (!fonte_equacao)
+    {
+        al_destroy_font(fonte);
+
+        al_destroy_event_queue(fila_eventos);
+
+        al_destroy_timer(timer);
+
+        fundo_finalizar();
+
+        al_destroy_display(tela);
+
+        return 1;
+    }
 
 
     /*
         OBJETOS DO JOGO
     */
 
-    Jogador jogador;
-
-    Tiro tiros[MAX_TIROS];
-
-    Inimigo inimigo;
+    
 
 
     // Inicializa cada objeto
+    Jogador jogador;
+    Tiro tiros[MAX_TIROS];
+    Inimigo inimigo;
+    Equacao equacao;
+    Pergunta pergunta;
+
     jogador_inicializar(&jogador);
-
     tiros_inicializar(tiros);
-
     inimigo_inicializar(&inimigo);
+
+    equacao_gerar_nova(&equacao);
+    pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
+
+    int espera_proxima = 0;   // frames até a próxima pergunta
 
 
     /*
@@ -333,9 +361,7 @@ int main(void)
             ATUALIZACAO DO JOGO
         */
 
-        if (evento.type ==
-            ALLEGRO_EVENT_TIMER)
-        {
+        if (evento.type == ALLEGRO_EVENT_TIMER){
             /*
                 Se estamos no menu,
                 não atualizamos os objetos.
@@ -383,10 +409,9 @@ int main(void)
                 COLISAO ENTRE TIROS E INIMIGO
             */
 
-            for (int i = 0;
-                i < MAX_TIROS;
-                i++)
+            for (int i = 0; i < MAX_TIROS; i++)
             {
+
                 // Ignora espaços vazios do vetor
                 if (!tiros[i].ativo)
                 {
@@ -410,99 +435,68 @@ int main(void)
                     );
                 }
             }
+            //colisão do tiro com as alternativas
+            for (int i = 0; i < MAX_TIROS; i++)
+            {
+                if (!tiros[i].ativo) continue;
 
+                int r = pergunta_testar_tiro(&pergunta, tiros[i].x, tiros[i].y, 0, 0);
+                if (r != -1)
+                {
+                    tiros[i].ativo = false;
+                    espera_proxima = 120;          // 2 segundos a 60 FPS
+                    if (r == 1) { /* acertou: pontos += 10; */ }
+                    else { /* errou: vidas--; */ }
+                }
+            }
 
-            /*
-     /*
-    FUNDO ANIMADO
+            // depois da espera, gera nova equação e novas alternativas
+            if (pergunta.respondida && --espera_proxima <= 0)
+            {
+                equacao_gerar_nova(&equacao);
+                pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
+            }
 
-    Atualiza o frame da animação.
-*/
-
-/*
-FUNDO ANIMADO
-
-Atualiza o frame da animação.
-*/
-
+            //Atualiza o frame da animação.
             fundo_atualizar();
 
-
-            /*
-                DESENHO DA ARENA
-
-                O fundo é desenhado primeiro,
-                para que os outros objetos
-                apareçam por cima dele.
-            */
-
+            //O fundo é desenhado primeiro, para que os outros objetos apareçam por cima dele.
             fundo_desenhar();
 
+            // EQUACAO - Desenha a equação no meio da tela por cima de tudo
+            equacao_desenhar(&equacao, fonte_equacao, LARGURA_TELA, ALTURA_TELA);
 
-            /*
-                JOGADOR
-            */
+            //desenhar alternativas
+            pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA);
 
-            jogador_desenhar(
-                &jogador
-            );
+            //JOGADOR
+            jogador_desenhar(&jogador);
 
+            //ARMA
+            jogador_desenhar_arma(&jogador, mouse_x, mouse_y);
+        
+            //TIROS
+            tiros_desenhar(tiros);
 
-            /*
-                ARMA
-            */
-
-            jogador_desenhar_arma(
-                &jogador,
-                mouse_x,
-                mouse_y
-            );
-
-
-            /*
-                TIROS
-            */
-
-            tiros_desenhar(
-                tiros
-            );
-
-
-            /*
-                INIMIGO
-            */
-
-            inimigo_desenhar(
-                &inimigo
-            );
-
-
-            /*
-                Mostra o frame completo na tela.
-            */
-
+            //INIMIGO
+            inimigo_desenhar(&inimigo);
+            
+            //Mostra o frame completo na tela.
             al_flip_display();
         }
     }
 
-
-    /*
-        FINALIZACAO
-    */
+    //FINALIZACAO
 
     al_destroy_font(fonte);
-
-    al_destroy_event_queue(
-        fila_eventos
-    );
-
+    al_destroy_event_queue(fila_eventos);
     al_destroy_timer(timer);
 
     // Libera a imagem do fundo
     fundo_finalizar();
-
     al_destroy_display(tela);
-
+    al_destroy_font(fonte_equacao);
+    al_destroy_font(fonte);
 
     return 0;
 }
