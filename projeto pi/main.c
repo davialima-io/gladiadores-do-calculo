@@ -21,7 +21,7 @@ int main(void)
     }
 
 
-    // Permite desenhar retângulos, círculos e linhas
+    // Permite desenhar ret?ngulos, c?rculos e linhas
     if (!al_init_primitives_addon())
     {
         return 1;
@@ -79,7 +79,7 @@ int main(void)
     /*
         TIMER
 
-        O jogo será atualizado 60 vezes por segundo.
+        O jogo ser? atualizado 60 vezes por segundo.
     */
 
     ALLEGRO_TIMER* timer =
@@ -225,7 +225,7 @@ int main(void)
         ALLEGRO_EVENT evento;
 
 
-        // Espera até acontecer algum evento
+        // Espera at? acontecer algum evento
         al_wait_for_event(
             fila_eventos,
             &evento
@@ -338,7 +338,7 @@ int main(void)
         {
             /*
                 Se estamos no menu,
-                não atualizamos os objetos.
+                n?o atualizamos os objetos.
             */
 
             if (no_menu)
@@ -387,7 +387,7 @@ int main(void)
                 i < MAX_TIROS;
                 i++)
             {
-                // Ignora espaços vazios do vetor
+                // Ignora espa?os vazios do vetor
                 if (!tiros[i].ativo)
                 {
                     continue;
@@ -416,13 +416,13 @@ int main(void)
      /*
     FUNDO ANIMADO
 
-    Atualiza o frame da animação.
+    Atualiza o frame da anima??o.
 */
 
 /*
 FUNDO ANIMADO
 
-Atualiza o frame da animação.
+Atualiza o frame da anima??o.
 */
 
             fundo_atualizar();
@@ -431,9 +431,9 @@ Atualiza o frame da animação.
             /*
                 DESENHO DA ARENA
 
-                O fundo é desenhado primeiro,
+                O fundo ? desenhado primeiro,
                 para que os outros objetos
-                apareçam por cima dele.
+                apare?am por cima dele.
             */
 
             fundo_desenhar();
