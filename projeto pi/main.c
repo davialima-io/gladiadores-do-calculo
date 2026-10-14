@@ -23,7 +23,7 @@ int main(void){
 
    srand((unsigned)time(NULL));//gera num aleatório pra equação
 
-    // Permite desenhar retângulos, círculos e linhas
+    // Permite desenhar ret?ngulos, c?rculos e linhas
     if (!al_init_primitives_addon())
     {
         return 1;
@@ -86,7 +86,7 @@ int main(void){
     /*
         TIMER
 
-        O jogo será atualizado 60 vezes por segundo.
+        O jogo ser? atualizado 60 vezes por segundo.
     */
 
     ALLEGRO_TIMER* timer =
@@ -253,7 +253,7 @@ int main(void){
         ALLEGRO_EVENT evento;
 
 
-        // Espera até acontecer algum evento
+        // Espera at? acontecer algum evento
         al_wait_for_event(
             fila_eventos,
             &evento
@@ -364,7 +364,7 @@ int main(void){
         if (evento.type == ALLEGRO_EVENT_TIMER){
             /*
                 Se estamos no menu,
-                não atualizamos os objetos.
+                n?o atualizamos os objetos.
             */
 
             if (no_menu)
@@ -411,8 +411,12 @@ int main(void){
 
             for (int i = 0; i < MAX_TIROS; i++)
             {
+<<<<<<< HEAD
+                // Ignora espa?os vazios do vetor
+=======
 
                 // Ignora espaços vazios do vetor
+>>>>>>> 9ebb7a56ae4b3207537b49b26719080fa9b85212
                 if (!tiros[i].ativo)
                 {
                     continue;
@@ -450,17 +454,44 @@ int main(void){
                 }
             }
 
+<<<<<<< HEAD
+            /*
+     /*
+    FUNDO ANIMADO
+
+    Atualiza o frame da anima??o.
+*/
+
+/*
+FUNDO ANIMADO
+
+Atualiza o frame da anima??o.
+*/
+=======
             // depois da espera, gera nova equação e novas alternativas
             if (pergunta.respondida && --espera_proxima <= 0)
             {
                 equacao_gerar_nova(&equacao);
                 pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
             }
+>>>>>>> 9ebb7a56ae4b3207537b49b26719080fa9b85212
 
             //Atualiza o frame da animação.
             fundo_atualizar();
 
+<<<<<<< HEAD
+
+            /*
+                DESENHO DA ARENA
+
+                O fundo ? desenhado primeiro,
+                para que os outros objetos
+                apare?am por cima dele.
+            */
+
+=======
             //O fundo é desenhado primeiro, para que os outros objetos apareçam por cima dele.
+>>>>>>> 9ebb7a56ae4b3207537b49b26719080fa9b85212
             fundo_desenhar();
 
             // EQUACAO - Desenha a equação no meio da tela por cima de tudo
