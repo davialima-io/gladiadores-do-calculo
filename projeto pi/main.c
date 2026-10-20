@@ -11,317 +11,183 @@
 #include <allegro5/allegro_ttf.h>
 #include "alternativa.h"
 
-int main(void){
-    /*
-        INICIALIZACAO DO ALLEGRO
-    */
+int main(void) {
 
-    if (!al_init())
-    {
+    // Inicializa a biblioteca principal do Allegro
+    if (!al_init()) {
         return 1;
     }
 
-   srand((unsigned)time(NULL));//gera num aleatório pra equação
+    // Inicializa a semente para geração de números aleatórios (usada nas equações)
+    srand((unsigned)time(NULL));
 
-    // Permite desenhar ret?ngulos, c?rculos e linhas
-    if (!al_init_primitives_addon())
-    {
+    // Inicializa o add-on de primitivas (permite desenhar retângulos, círculos e linhas)
+    if (!al_init_primitives_addon()) {
         return 1;
     }
 
-
-    // Instala teclado
-    if (!al_install_keyboard())
-    {
+    // Instala o suporte ao teclado
+    if (!al_install_keyboard()) {
         return 1;
     }
 
-
-    // Instala mouse
-    if (!al_install_mouse())
-    {
+    // Instala o suporte ao mouse
+    if (!al_install_mouse()) {
         return 1;
     }
 
-
-    // Inicializa o sistema de fontes
+    // Inicializa o sistema de fontes do Allegro
     al_init_font_addon();
 
-    if (!al_init_ttf_addon())
-    {
+    // Inicializa o add-on de fontes TrueType (TTF)
+    if (!al_init_ttf_addon()) {
         return 1;
     }
 
 
-    /*
-        CRIACAO DA JANELA
-    */
+    // CRIAÇÃO DA JANELA (DISPLAY)
 
-    ALLEGRO_DISPLAY* tela =
-        al_create_display(
-            LARGURA_TELA,
-            ALTURA_TELA
-        );
-
-    if (!tela)
-    {
+    ALLEGRO_DISPLAY* tela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+    if (!tela) {
         return 1;
     }
 
 
-    /*
-        FUNDO
+    // INICIALIZAÇÃO DO FUNDO
 
-        Carrega a imagem da arena.
-    */
-
-    if (!fundo_inicializar())
-    {
+    // Carrega os recursos visuais da arena/fundo
+    if (!fundo_inicializar()) {
         al_destroy_display(tela);
-
         return 1;
     }
 
 
-    /*
-        TIMER
+    // CONFIGURAÇÃO DO TIMER
 
-        O jogo ser? atualizado 60 vezes por segundo.
-    */
-
-    ALLEGRO_TIMER* timer =
-        al_create_timer(1.0 / 60.0);
-
-    if (!timer)
-    {
+    // Cria o timer principal do jogo configurado para rodar a 60 quadros por segundo (FPS)
+    ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
+    if (!timer) {
         fundo_finalizar();
-
         al_destroy_display(tela);
-
         return 1;
     }
 
 
-    /*
-        FILA DE EVENTOS
-    */
+    // FILA DE EVENTOS
 
-    ALLEGRO_EVENT_QUEUE* fila_eventos =
-        al_create_event_queue();
-
-    if (!fila_eventos)
-    {
+    ALLEGRO_EVENT_QUEUE* fila_eventos = al_create_event_queue();
+    if (!fila_eventos) {
         al_destroy_timer(timer);
-
         fundo_finalizar();
-
         al_destroy_display(tela);
-
         return 1;
     }
 
 
-    /*
-        REGISTRO DAS FONTES DE EVENTOS
-    */
+    // REGISTRO DAS FONTES DE EVENTOS NA FILA
 
-    al_register_event_source(
-        fila_eventos,
-        al_get_display_event_source(tela)
-    );
-
-    al_register_event_source(
-        fila_eventos,
-        al_get_timer_event_source(timer)
-    );
-
-    al_register_event_source(
-        fila_eventos,
-        al_get_keyboard_event_source()
-    );
-
-    al_register_event_source(
-        fila_eventos,
-        al_get_mouse_event_source()
-    );
+    al_register_event_source(fila_eventos, al_get_display_event_source(tela));
+    al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
+    al_register_event_source(fila_eventos, al_get_keyboard_event_source());
+    al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
 
-    /*
-        FONTE
-    */
+    // CARREGAMENTO DE FONTES
 
-    ALLEGRO_FONT* fonte =
-        al_create_builtin_font();
-
-    if (!fonte)
-    {
+    // Fonte padrão do sistema (fallback)
+    ALLEGRO_FONT* fonte = al_create_builtin_font();
+    if (!fonte) {
         al_destroy_event_queue(fila_eventos);
-
         al_destroy_timer(timer);
-
         fundo_finalizar();
-
         al_destroy_display(tela);
-
         return 1;
     }
+
+    // Fonte personalizada (Arial) para exibição de equações e textos do jogo
     ALLEGRO_FONT* fonte_equacao = al_load_ttf_font("C:/Windows/Fonts/arial.ttf", 20, 0);
-
-    if (!fonte_equacao)
-    {
+    if (!fonte_equacao) {
         al_destroy_font(fonte);
-
         al_destroy_event_queue(fila_eventos);
-
         al_destroy_timer(timer);
-
         fundo_finalizar();
-
         al_destroy_display(tela);
-
         return 1;
     }
 
 
-    /*
-        OBJETOS DO JOGO
-    */
+    // ESTADOS E OBJETOS DO JOGO
 
-    
-
-
-    // Inicializa cada objeto
     Jogador jogador;
     Tiro tiros[MAX_TIROS];
     Inimigo inimigo;
     Equacao equacao;
     Pergunta pergunta;
 
+    // Inicializa as entidades principais
     jogador_inicializar(&jogador);
     tiros_inicializar(tiros);
     inimigo_inicializar(&inimigo);
 
+    // Gera a primeira equação e suas respectivas alternativas
     equacao_gerar_nova(&equacao);
     pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
 
-    int espera_proxima = 0;   // frames até a próxima pergunta
+    int espera_proxima = 0; // Contador de frames de espera até gerar a próxima pergunta
 
-
-    /*
-        ESTADO DO TECLADO
-    */
-
+    // Variáveis de controle de estado de entrada
     ALLEGRO_KEYBOARD_STATE estado_teclado;
+    float mouse_x = LARGURA_TELA / 2;
+    float mouse_y = ALTURA_TELA / 2;
+
+    // Flags de controle do fluxo do jogo
+    bool no_menu = true;     // true = exibe o menu principal; false = em partida
+    bool executando = true;  // controla o loop principal da aplicação
 
 
-    /*
-        POSICAO DO MOUSE
-    */
-
-    float mouse_x =
-        LARGURA_TELA / 2;
-
-    float mouse_y =
-        ALTURA_TELA / 2;
-
-
-    /*
-        ESTADO DO JOGO
-
-        true  = menu
-        false = partida
-    */
-
-    bool no_menu = true;
-
-    bool executando = true;
-
-
-    /*
-        INICIA O TIMER
-    */
+    // INICIALIZAÇÃO DO TIMER PRINCIPAL
 
     al_start_timer(timer);
 
 
-    /*
-        LOOP PRINCIPAL
-    */
+    // LOOP PRINCIPAL DO JOGO
 
-    while (executando)
-    {
+    while (executando) {
         ALLEGRO_EVENT evento;
 
-
-        // Espera at? acontecer algum evento
-        al_wait_for_event(
-            fila_eventos,
-            &evento
-        );
+        // Aguarda a ocorrência do próximo evento na fila
+        al_wait_for_event(fila_eventos, &evento);
 
 
-        /*
-            FECHAR JANELA
-        */
-
-        if (evento.type ==
-            ALLEGRO_EVENT_DISPLAY_CLOSE)
-        {
+        // TRATAMENTO DE EVENTOS: FECHAR JANELA
+        if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             executando = false;
         }
 
 
-        /*
-            MOVIMENTO DO MOUSE
-        */
-
-        if (evento.type ==
-            ALLEGRO_EVENT_MOUSE_AXES)
-        {
+        // TRATAMENTO DE EVENTOS: MOVIMENTO DO MOUSE
+        if (evento.type == ALLEGRO_EVENT_MOUSE_AXES) {
             mouse_x = evento.mouse.x;
             mouse_y = evento.mouse.y;
         }
 
 
-        /*
-            CLIQUE DO MOUSE
-        */
-
-        if (evento.type ==
-            ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
-        {
+        // TRATAMENTO DE EVENTOS: CLIQUE DO MOUSE
+        if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
             mouse_x = evento.mouse.x;
             mouse_y = evento.mouse.y;
 
-
-            /*
-                Se estamos no menu,
-                o clique pode iniciar o jogo.
-            */
-
-            if (no_menu)
-            {
-                if (evento.mouse.button == 1)
-                {
-                    if (menu_clicou_start(
-                        mouse_x,
-                        mouse_y))
-                    {
-                        no_menu = false;
+            // Se estiver no menu, verifica clique no botão de iniciar
+            if (no_menu) {
+                if (evento.mouse.button == 1) {
+                    if (menu_clicou_start(mouse_x, mouse_y)) {
+                        no_menu = false; // Inicia o jogo
                     }
                 }
             }
-
-
-            /*
-                Se estamos jogando,
-                o clique dispara um tiro.
-            */
-
-            else
-            {
-                if (evento.mouse.button == 1)
-                {
+            // Se estiver jogando, o clique esquerdo dispara um tiro
+            else {
+                if (evento.mouse.button == 1) {
                     tiro_disparar(
                         tiros,
                         jogador_centro_x(&jogador),
@@ -334,199 +200,118 @@ int main(void){
         }
 
 
-        /*
-            TECLADO
-        */
-
-        if (evento.type ==
-            ALLEGRO_EVENT_KEY_DOWN)
-        {
-            /*
-                SPACE inicia o jogo
-                quando estamos no menu.
-            */
-
-            if (no_menu)
-            {
-                if (evento.keyboard.keycode ==
-                    ALLEGRO_KEY_SPACE)
-                {
+        // TRATAMENTO DE EVENTOS: TECLADO
+        if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+            // Tecla ESPAÇO no menu também inicia o jogo
+            if (no_menu) {
+                if (evento.keyboard.keycode == ALLEGRO_KEY_SPACE) {
                     no_menu = false;
                 }
             }
         }
 
 
-        /*
-            ATUALIZACAO DO JOGO
-        */
+        // ATUALIZAÇÃO DO JOGO (TICK DE 60 FPS)
+        if (evento.type == ALLEGRO_EVENT_TIMER) {
 
-        if (evento.type == ALLEGRO_EVENT_TIMER){
-            /*
-                Se estamos no menu,
-                n?o atualizamos os objetos.
-            */
-
-            if (no_menu)
-            {
+            // Se estiver no menu, apenas renderiza o menu e pula a lógica da partida
+            if (no_menu) {
                 menu_desenhar(fonte);
-
                 continue;
             }
 
+            // Atualiza o estado do jogador capturando as teclas pressionadas
+            al_get_keyboard_state(&estado_teclado);
+            jogador_atualizar(&jogador, &estado_teclado);
 
-            /*
-                JOGADOR
-            */
-
-            al_get_keyboard_state(
-                &estado_teclado
-            );
-
-            jogador_atualizar(
-                &jogador,
-                &estado_teclado
-            );
-
-
-            /*
-                TIROS
-            */
-
+            // Atualiza a posição dos projéteis ativos
             tiros_atualizar(tiros);
 
-
-            /*
-                INIMIGO
-            */
-
-            inimigo_atualizar(
-                &inimigo
-            );
+            // Atualiza o comportamento/movimento do inimigo
+            inimigo_atualizar(&inimigo);
 
 
-            /*
-                COLISAO ENTRE TIROS E INIMIGO
-            */
-
-            for (int i = 0; i < MAX_TIROS; i++)
-            {
-
-                // Ignora espa?os vazios do vetor
-
-
-                // Ignora espaços vazios do vetor
-
-                if (!tiros[i].ativo)
-                {
-                    continue;
+            // COLISÕES: TIROS X INIMIGO
+            for (int i = 0; i < MAX_TIROS; i++) {
+                if (!tiros[i].ativo) {
+                    continue; // Ignora slots de tiros inativos
                 }
 
-
-                // Verifica se o tiro acertou o inimigo
-                if (inimigo_colidiu_com_tiro(
-                    &inimigo,
-                    tiros[i].x,
-                    tiros[i].y))
-                {
-                    // O tiro desaparece
-                    tiros[i].ativo = false;
-
-
-                    // O inimigo perde vida
-                    inimigo_receber_dano(
-                        &inimigo
-                    );
+                // Verifica colisão do tiro atual com o inimigo
+                if (inimigo_colidiu_com_tiro(&inimigo, tiros[i].x, tiros[i].y)) {
+                    tiros[i].ativo = false;         // O tiro some ao atingir o alvo
+                    inimigo_receber_dano(&inimigo); // O inimigo sofre dano
                 }
             }
-            //colisão do tiro com as alternativas
-            for (int i = 0; i < MAX_TIROS; i++)
-            {
+
+
+            // COLISÕES: TIROS X ALTERNATIVAS DA EQUAÇÃO
+            for (int i = 0; i < MAX_TIROS; i++) {
                 if (!tiros[i].ativo) continue;
 
                 int r = pergunta_testar_tiro(&pergunta, tiros[i].x, tiros[i].y, 0, 0);
-                if (r != -1)
-                {
+                if (r != -1) {
                     tiros[i].ativo = false;
-                    espera_proxima = 120;          // 2 segundos a 60 FPS
-                    if (r == 1) { /* acertou: pontos += 10; */ }
-                    else { /* errou: vidas--; */ }
+                    espera_proxima = 120; // Pausa de 2 segundos (120 frames a 60 FPS) até a próxima pergunta
+
+                    if (r == 1) {
+                        // Resposta correta: pontos += 10; 
+                    }
+                    else {
+                        // Resposta incorreta: vidas--; 
+                    }
                 }
             }
 
 
-            /*
-     /*
-    FUNDO ANIMADO
-
-    Atualiza o frame da anima??o.
-*/
-
-/*
-FUNDO ANIMADO
-
-Atualiza o frame da anima??o.
-*/
-            // depois da espera, gera nova equação e novas alternativas
-            if (pergunta.respondida && --espera_proxima <= 0)
-            {
+            // GERENCIAMENTO DE TEMPO PARA PRÓXIMA PERGUNTA
+            // Após a resposta, aguarda o término da contagem para gerar nova equação
+            if (pergunta.respondida && --espera_proxima <= 0) {
                 equacao_gerar_nova(&equacao);
                 pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
             }
 
 
-            //Atualiza o frame da animação.
+            // RENDERIZAÇÃO GRÁFICA (DESENHO NA TELA)
+
+            // Atualiza o frame do fundo animado
             fundo_atualizar();
 
-
-
-            /*
-                DESENHO DA ARENA
-
-                O fundo ? desenhado primeiro,
-                para que os outros objetos
-                apare?am por cima dele.
-            */
-
-
-            //O fundo é desenhado primeiro, para que os outros objetos apareçam por cima dele.
-
+            // Desenha o fundo primeiro (camada mais ao fundo)
             fundo_desenhar();
 
-            // EQUACAO - Desenha a equação no meio da tela por cima de tudo
+            // Desenha a equação matemática centralizada na parte superior
             equacao_desenhar(&equacao, fonte_equacao, LARGURA_TELA, ALTURA_TELA);
 
-            //desenhar alternativas
+            // Desenha as alternativas de resposta da equação
             pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA);
 
-            //JOGADOR
+            // Desenha o personagem jogador
             jogador_desenhar(&jogador);
 
-            //ARMA
+            // Desenha a arma/mira do jogador apontada para a posição do mouse
             jogador_desenhar_arma(&jogador, mouse_x, mouse_y);
-        
-            //TIROS
+
+            // Desenha todos os tiros ativos na tela
             tiros_desenhar(tiros);
 
-            //INIMIGO
+            // Desenha o inimigo
             inimigo_desenhar(&inimigo);
-            
-            //Mostra o frame completo na tela.
+
+            // Exibe o buffer completo na tela (Double Buffering)
             al_flip_display();
         }
     }
 
-    //FINALIZACAO
+
+    // FINALIZAÇÃO E LIBERAÇÃO DE RECURSOS
 
     al_destroy_font(fonte);
+    al_destroy_font(fonte_equacao);
     al_destroy_event_queue(fila_eventos);
     al_destroy_timer(timer);
-
-    // Libera a imagem do fundo
     fundo_finalizar();
     al_destroy_display(tela);
-    al_destroy_font(fonte_equacao);
-    al_destroy_font(fonte);
 
     return 0;
 }

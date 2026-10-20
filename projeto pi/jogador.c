@@ -42,7 +42,7 @@ void jogador_atualizar( Jogador* jogador, ALLEGRO_KEYBOARD_STATE* estado_teclado
     // Aplica gravidade
     jogador->velocidade_y += jogador->gravidade;
     // Atualiza possicao
-    
+    jogador->y += jogador->velocidade_y;
     // Chão da arena
     float chao = ALTURA_TELA - jogador->tamanho;
     if (jogador->y >= chao) {
