@@ -1,25 +1,18 @@
-#pragma once
 #ifndef MENU_H
 #define MENU_H
 
-#include <stdbool.h>
-
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
 
+typedef enum {
+    MENU_JOGAR = 0,
+    MENU_CREDITOS,   /* tratado dentro do proprio menu */
+    MENU_SAIR
+} MenuOpcao;
 
-// Desenha a tela inicial do jogo
-void menu_desenhar(
-    ALLEGRO_FONT* fonte
-);
+/* Mostra o menu principal e fica nele ate o jogador escolher.
+   Retorna MENU_JOGAR ou MENU_SAIR.
+   Precisa de: al_init() e um display ja criado.
+   Arquivo usado: menu_fundo.png (na pasta do projeto). */
+int menu_executar(ALLEGRO_DISPLAY* display);
 
-
-// Verifica se o jogador clicou no botão START
-bool menu_clicou_start(
-    float mouse_x,
-    float mouse_y
-);
-
-
-#endif
+#endif /* MENU_H */
