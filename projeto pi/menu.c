@@ -125,12 +125,6 @@ int menu_executar(ALLEGRO_DISPLAY* display)
                     by[i] + bh / 2 - 4,
                     ALLEGRO_ALIGN_CENTER, textos[i]);
             }
-
-            /*instrucoes na parte de baixo*/
-            al_draw_text(fonte, COR_TEXTO, largura_janela / 2, altura_janela - 30,
-                ALLEGRO_ALIGN_CENTER,
-                "SETAS PARA ESCOLHER - ENTER PARA CONFIRMAR");
-
             /*mostra na tela*/
             al_flip_display();
         }
