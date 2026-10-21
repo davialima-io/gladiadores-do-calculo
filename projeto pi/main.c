@@ -205,6 +205,7 @@ int main(void){
     pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
 
     int espera_proxima = 0;   // frames até a próxima pergunta
+    int vidas = VIDAS_INICIAIS;
 
 
     /*
@@ -446,8 +447,24 @@ int main(void){
                     tiros[i].ativo = false;
                     espera_proxima = 120;          // 2 segundos a 60 FPS
                     if (r == 1) { /* acertou: pontos += 10; */ }
-                    else { /* errou: vidas--; */ }
+                    else { vidas--; }
                 }
+            }
+            // Game over: acabaram as vidas, volta pro menu e reseta a partida
+            if (vidas <= 0)
+            {
+                vidas = VIDAS_INICIAIS;
+
+                jogador_inicializar(&jogador);
+                tiros_inicializar(tiros);
+                inimigo_inicializar(&inimigo);
+
+                equacao_gerar_nova(&equacao);
+                pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
+                espera_proxima = 0;
+
+                no_menu = true;
+                continue;
             }
 
             // depois da espera, gera nova equação e novas alternativas
@@ -480,6 +497,9 @@ int main(void){
 
             //INIMIGO
             inimigo_desenhar(&inimigo);
+
+            //VIDAS
+            vidas_desenhar(vidas);
             
             //Mostra o frame completo na tela.
             al_flip_display();

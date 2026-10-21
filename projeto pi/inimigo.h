@@ -1,6 +1,7 @@
 
 #ifndef INIMIGO_H
 #define INIMIGO_H
+#define VIDA_MAXIMA_INIMIGO 3
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>

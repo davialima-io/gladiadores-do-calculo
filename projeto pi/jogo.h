@@ -7,13 +7,11 @@
 #define LARGURA_TELA 800
 #define ALTURA_TELA 600
 
+// Quantidade de vidas do jogador no começo da partida
+#define VIDAS_INICIAIS 3
 
-// Quantidade máxima de tiros que podem existir ao mesmo tempo
-#define MAX_TIROS 50
 
-
-// Vida inicial do inimigo
-#define VIDA_MAXIMA_INIMIGO 3
-
+// Desenha os corações de vida 
+void vidas_desenhar(int vidas_atuais);
 
 #endif

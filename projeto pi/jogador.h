@@ -6,7 +6,7 @@
 #include <allegro5/allegro_primitives.h>
 
 
-// Representa o jogador dentro da arena
+// Struct pro jogador
 typedef struct
 {
     float x;
@@ -14,6 +14,8 @@ typedef struct
 
     float tamanho;
     float velocidade;
+
+    int vidas;
 
 } Jogador;
 

@@ -1,5 +1,4 @@
 #include "jogador.h"
-
 #include <math.h>
 
 

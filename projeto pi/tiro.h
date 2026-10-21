@@ -1,6 +1,7 @@
 #pragma once
 #ifndef TIRO_H
 #define TIRO_H
+#define MAX_TIROS 50
 
 #include <stdbool.h>
 
