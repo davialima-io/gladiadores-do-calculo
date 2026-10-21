@@ -5,6 +5,8 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_ttf.h>
 #include <time.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 #include "jogo.h"
 #include "jogador.h"
@@ -13,6 +15,7 @@
 #include "menu.h"
 #include "fundo.h"
 #include "equacao.h"
+#include "tempo.h"
 #include "alternativa.h"
 
 int main(void)
@@ -22,10 +25,10 @@ int main(void)
         return 1;
     }
 
-    // Semente para numeros aleatorios (usada nas equacoes)
+    // Semente para numeros aleatorios
     srand((unsigned)time(NULL));
 
-    // Primitivas (retangulos, circulos e linhas)
+    // Primitivas
     if (!al_init_primitives_addon()) {
         return 1;
     }
@@ -44,7 +47,9 @@ int main(void)
     if (!al_init_ttf_addon()) return 1;
 
     // CRIACAO DA JANELA
-    ALLEGRO_DISPLAY* tela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+    ALLEGRO_DISPLAY* tela =
+        al_create_display(LARGURA_TELA, ALTURA_TELA);
+
     if (!tela) {
         return 1;
     }
@@ -56,7 +61,9 @@ int main(void)
     }
 
     // TIMER (60 FPS)
-    ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
+    ALLEGRO_TIMER* timer =
+        al_create_timer(1.0 / 60.0);
+
     if (!timer) {
         fundo_finalizar();
         al_destroy_display(tela);
@@ -64,7 +71,9 @@ int main(void)
     }
 
     // FILA DE EVENTOS
-    ALLEGRO_EVENT_QUEUE* fila_eventos = al_create_event_queue();
+    ALLEGRO_EVENT_QUEUE* fila_eventos =
+        al_create_event_queue();
+
     if (!fila_eventos) {
         al_destroy_timer(timer);
         fundo_finalizar();
@@ -72,11 +81,26 @@ int main(void)
         return 1;
     }
 
-    // REGISTRO DAS FONTES DE EVENTOS
-    al_register_event_source(fila_eventos, al_get_display_event_source(tela));
-    al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
-    al_register_event_source(fila_eventos, al_get_keyboard_event_source());
-    al_register_event_source(fila_eventos, al_get_mouse_event_source());
+    // REGISTRO DOS EVENTOS
+    al_register_event_source(
+        fila_eventos,
+        al_get_display_event_source(tela)
+    );
+
+    al_register_event_source(
+        fila_eventos,
+        al_get_timer_event_source(timer)
+    );
+
+    al_register_event_source(
+        fila_eventos,
+        al_get_keyboard_event_source()
+    );
+
+    al_register_event_source(
+        fila_eventos,
+        al_get_mouse_event_source()
+    );
 
     // FONTES E IMAGENS
     ALLEGRO_FONT* fonte = al_create_builtin_font();
@@ -106,173 +130,272 @@ int main(void)
     Equacao equacao;
     Pergunta pergunta;
 
-    jogador_inicializar(&jogador);
-    tiros_inicializar(tiros);
+    // OBJETO DO CRONOMETRO
+    Tempo tempo;
 
-    // Inicializa o inimigo na posicao correta do chao
-    inimigo_inicializar(&inimigo, 750, ALTURA_TELA - 50);
-
-    // Vidas do jogador
+    // Vidas do jogador (reiniciadas a cada partida)
     int vidas = VIDAS_INICIAIS;
 
-    // Primeira equacao e suas alternativas
-    // Y = 60 e altura = 100 para aumentar o escudo
-    equacao_gerar_nova(&equacao);
-    pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
-
-    int espera_proxima = 0; // frames de espera ate a proxima pergunta
-
-    // CHAMAR MENU: o menu tem seu proprio loop interno.
-    // So retorna quando o jogador escolhe JOGAR ou SAIR.
-    int opcao = menu_executar(tela);
-
-    if (opcao == MENU_SAIR) {
-        al_destroy_bitmap(escudo);
-        al_destroy_font(fonte);
-        al_destroy_font(fonte_equacao);
-        al_destroy_event_queue(fila_eventos);
-        al_destroy_timer(timer);
-        fundo_finalizar();
-        al_destroy_display(tela);
-        return 0;
-    }
+    // Frames de espera ate a proxima pergunta
+    int espera_proxima = 0;
 
     // ESTADO DE ENTRADA
     ALLEGRO_KEYBOARD_STATE estado_teclado;
+
     float mouse_x = LARGURA_TELA / 2;
     float mouse_y = ALTURA_TELA / 2;
-    bool executando = true;
 
-    // O timer so comeca a contar agora, depois do menu
-    al_start_timer(timer);
+    bool continuar_programa = true;
 
-    // LOOP PRINCIPAL
-    while (executando) {
-        ALLEGRO_EVENT evento;
-        al_wait_for_event(fila_eventos, &evento);
+    // LOOP EXTERNO: MENU E PARTIDAS
+    while (continuar_programa)
+    {
+        // MOSTRA O MENU
+        int opcao = menu_executar(tela);
 
-        // Fechar janela
-        if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-            executando = false;
+        if (opcao == MENU_SAIR)
+        {
+            break;
         }
 
-        // Movimento do mouse
-        if (evento.type == ALLEGRO_EVENT_MOUSE_AXES) {
-            mouse_x = evento.mouse.x;
-            mouse_y = evento.mouse.y;
-        }
+        // REINICIA OS OBJETOS PARA UMA NOVA PARTIDA
+        jogador_inicializar(&jogador);
+        tiros_inicializar(tiros);
 
-        // Clique do mouse (dispara tiro)
-        if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-            mouse_x = evento.mouse.x;
-            mouse_y = evento.mouse.y;
-            if (evento.mouse.button == 1) {
-                tiro_disparar(
-                    tiros,
-                    jogador_centro_x(&jogador),
-                    jogador_centro_y(&jogador),
+        inimigo_inicializar(
+            &inimigo,
+            750,
+            ALTURA_TELA - 50
+        );
+
+        vidas = VIDAS_INICIAIS;
+
+        equacao_gerar_nova(&equacao);
+
+        // Y = 60 e altura = 100 para aumentar o escudo
+        pergunta_de_equacao(
+            &pergunta,
+            &equacao,
+            LARGURA_TELA,
+            60,
+            100
+        );
+
+        espera_proxima = 0;
+
+        // REINICIA O CRONOMETRO
+        tempo_inicializar(&tempo);
+
+        // LIMPA EVENTOS ANTIGOS E INICIA O TIMER
+        al_flush_event_queue(fila_eventos);
+        al_start_timer(timer);
+
+        bool jogando = true;
+
+        // LOOP DA PARTIDA
+        while (jogando)
+        {
+            ALLEGRO_EVENT evento;
+
+            al_wait_for_event(
+                fila_eventos,
+                &evento
+            );
+
+            // FECHAR A JANELA
+            if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+            {
+                continuar_programa = false;
+                jogando = false;
+                break;
+            }
+
+            // MOVIMENTO DO MOUSE
+            if (evento.type == ALLEGRO_EVENT_MOUSE_AXES)
+            {
+                mouse_x = evento.mouse.x;
+                mouse_y = evento.mouse.y;
+            }
+
+            // CLIQUE DO MOUSE
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+            {
+                mouse_x = evento.mouse.x;
+                mouse_y = evento.mouse.y;
+
+                if (evento.mouse.button == 1)
+                {
+                    tiro_disparar(
+                        tiros,
+                        jogador_centro_x(&jogador),
+                        jogador_centro_y(&jogador),
+                        mouse_x,
+                        mouse_y
+                    );
+                }
+            }
+
+            // ATUALIZACAO DO JOGO (60 FPS)
+            if (evento.type == ALLEGRO_EVENT_TIMER)
+            {
+                tempo_atualizar(&tempo);
+
+                // TEMPO ESGOTADO: VOLTA AO MENU
+                if (tempo.decorrido >= tempo.duracao)
+                {
+                    jogando = false;
+                    break;
+                }
+
+                al_get_keyboard_state(&estado_teclado);
+
+                jogador_atualizar(
+                    &jogador,
+                    &estado_teclado
+                );
+
+                tiros_atualizar(tiros);
+
+                inimigo_atualizar(
+                    &inimigo,
+                    LARGURA_TELA,
+                    ALTURA_TELA
+                );
+
+                // COLISOES: TIROS X INIMIGO
+                for (int i = 0; i < MAX_TIROS; i++)
+                {
+                    if (!tiros[i].ativo)
+                    {
+                        continue;
+                    }
+
+                    if (inimigo_colidiu_com_tiro(
+                        &inimigo,
+                        tiros[i].x,
+                        tiros[i].y
+                    ))
+                    {
+                        tiros[i].ativo = false;
+
+                        inimigo_receber_dano(
+                            &inimigo,
+                            750,
+                            ALTURA_TELA
+                        );
+                    }
+                }
+
+                // COLISOES: TIROS X ALTERNATIVAS
+                for (int i = 0; i < MAX_TIROS; i++)
+                {
+                    if (!tiros[i].ativo)
+                    {
+                        continue;
+                    }
+
+                    int r = pergunta_testar_tiro(
+                        &pergunta,
+                        tiros[i].x,
+                        tiros[i].y,
+                        0,
+                        0
+                    );
+
+                    if (r != -1)
+                    {
+                        tiros[i].ativo = false;
+                        espera_proxima = 120;
+
+                        if (r == 1)
+                        {
+                            // ACERTO: ADICIONA 7 SEGUNDOS
+                            tempo_adicionar(&tempo, 7.0);
+                        }
+                        else
+                        {
+                            // ERRO: RETIRA 7 SEGUNDOS E PERDE UMA VIDA
+                            tempo_adicionar(&tempo, -7.0);
+                            vidas--;
+                        }
+                    }
+                }
+
+                // GAME OVER: ACABARAM AS VIDAS, VOLTA AO MENU
+                if (vidas <= 0)
+                {
+                    jogando = false;
+                    break;
+                }
+
+                // PROXIMA PERGUNTA
+                if (pergunta.respondida && espera_proxima > 0)
+                {
+                    espera_proxima--;
+
+                    if (espera_proxima == 0)
+                    {
+                        equacao_gerar_nova(&equacao);
+
+                        pergunta_de_equacao(
+                            &pergunta,
+                            &equacao,
+                            LARGURA_TELA,
+                            60,
+                            100
+                        );
+                    }
+                }
+
+                // RENDERIZACAO
+                fundo_atualizar();
+                fundo_desenhar();
+
+                equacao_desenhar(
+                    &equacao,
+                    fonte_equacao,
+                    LARGURA_TELA,
+                    ALTURA_TELA
+                );
+
+                // Passa o escudo para a funcao
+                pergunta_desenhar(
+                    &pergunta,
+                    fonte_equacao,
+                    LARGURA_TELA,
+                    escudo
+                );
+
+                jogador_desenhar(&jogador);
+
+                jogador_desenhar_arma(
+                    &jogador,
                     mouse_x,
                     mouse_y
                 );
+
+                tiros_desenhar(tiros);
+                inimigo_desenhar(&inimigo);
+
+                tempo_desenhar(&tempo, fonte);
+
+                // VIDAS (por ultimo, pra ficar por cima de tudo)
+                vidas_desenhar(vidas);
+
+                al_flip_display();
             }
         }
 
-        // ATUALIZACAO DO JOGO (60 FPS)
-        if (evento.type == ALLEGRO_EVENT_TIMER) {
+        // PARA O TIMER DA PARTIDA
+        al_stop_timer(timer);
 
-            al_get_keyboard_state(&estado_teclado);
+        // DESCARTA EVENTOS PENDENTES DA PARTIDA
+        al_flush_event_queue(fila_eventos);
 
-            jogador_atualizar(&jogador, &estado_teclado);
-
-            tiros_atualizar(tiros);
-
-            // Atualiza o inimigo passando o chao correto
-            inimigo_atualizar(&inimigo, LARGURA_TELA, ALTURA_TELA);
-
-            // COLISOES: TIROS X INIMIGO
-            for (int i = 0; i < MAX_TIROS; i++) {
-                if (!tiros[i].ativo) continue;
-
-                if (inimigo_colidiu_com_tiro(&inimigo, tiros[i].x, tiros[i].y)) {
-                    tiros[i].ativo = false;
-                    inimigo_receber_dano(&inimigo, 750, ALTURA_TELA);
-                }
-            }
-
-            // COLISOES: TIROS X ALTERNATIVAS DA EQUACAO
-            for (int i = 0; i < MAX_TIROS; i++) {
-                if (!tiros[i].ativo) continue;
-
-                int r = pergunta_testar_tiro(&pergunta, tiros[i].x, tiros[i].y, 0, 0);
-                if (r != -1) {
-                    tiros[i].ativo = false;
-                    espera_proxima = 120; // 2 segundos a 60 FPS
-
-                    if (r == 1) {
-                        // Resposta correta
-                    }
-                    else {
-                        // Resposta incorreta: perde uma vida
-                        vidas--;
-                    }
-                }
-            }
-
-            // GAME OVER: acabaram as vidas, reseta a partida e volta pro menu
-            if (vidas <= 0) {
-                vidas = VIDAS_INICIAIS;
-
-                jogador_inicializar(&jogador);
-                tiros_inicializar(tiros);
-                inimigo_inicializar(&inimigo, 750, ALTURA_TELA - 50);
-
-                equacao_gerar_nova(&equacao);
-                pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
-                espera_proxima = 0;
-
-                // Pausa o timer enquanto o menu estiver aberto
-                al_stop_timer(timer);
-
-                opcao = menu_executar(tela);
-
-                if (opcao == MENU_SAIR) {
-                    executando = false;
-                    continue;
-                }
-
-                // Descarta eventos acumulados e retoma o jogo
-                al_flush_event_queue(fila_eventos);
-                al_start_timer(timer);
-                continue;
-            }
-
-            // Proxima pergunta depois do tempo de espera
-            if (pergunta.respondida && --espera_proxima <= 0) {
-                equacao_gerar_nova(&equacao);
-                pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
-            }
-
-            // RENDERIZACAO
-            fundo_atualizar();
-            fundo_desenhar();
-            equacao_desenhar(&equacao, fonte_equacao, LARGURA_TELA, ALTURA_TELA);
-
-            // Passa o escudo para a funcao
-            pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA, escudo);
-
-            jogador_desenhar(&jogador);
-            jogador_desenhar_arma(&jogador, mouse_x, mouse_y);
-            tiros_desenhar(tiros);
-            inimigo_desenhar(&inimigo);
-
-            // VIDAS (por ultimo, pra ficar por cima de tudo)
-            vidas_desenhar(vidas);
-
-            al_flip_display();
-        }
+        // O LOOP EXTERNO MOSTRA O MENU NOVAMENTE
     }
 
-    // FINALIZACAO
+    // FINALIZACAO: SO ACONTECE AO ESCOLHER SAIR OU FECHAR A JANELA
     al_destroy_bitmap(escudo);
     al_destroy_font(fonte);
     al_destroy_font(fonte_equacao);
