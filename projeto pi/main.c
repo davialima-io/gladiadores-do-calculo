@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -32,30 +33,18 @@ int main(void)
         return 1;
     }
 
-    // Imagens
+    // Imagens (necessario para o menu_fundo.png e escudo)
     if (!al_init_image_addon()) {
         return 1;
     }
 
-    // Teclado
-    if (!al_install_keyboard()) {
-        return 1;
-    }
-
-    // Mouse
-    if (!al_install_mouse()) {
-        return 1;
-    }
+    // Teclado e Mouse
+    if (!al_install_keyboard()) return 1;
+    if (!al_install_mouse()) return 1;
 
     // Fontes
-    if (!al_init_font_addon()) {
-        return 1;
-    }
-
-    // Fontes TrueType
-    if (!al_init_ttf_addon()) {
-        return 1;
-    }
+    if (!al_init_font_addon()) return 1;
+    if (!al_init_ttf_addon()) return 1;
 
     // CRIACAO DA JANELA
     ALLEGRO_DISPLAY* tela =
@@ -113,26 +102,20 @@ int main(void)
         al_get_mouse_event_source()
     );
 
-    // FONTES
+    // FONTES E IMAGENS
     ALLEGRO_FONT* fonte = al_create_builtin_font();
+    ALLEGRO_FONT* fonte_equacao = al_load_ttf_font("C:/Windows/Fonts/arial.ttf", 20, 0);
 
-    if (!fonte) {
-        al_destroy_event_queue(fila_eventos);
-        al_destroy_timer(timer);
-        fundo_finalizar();
-        al_destroy_display(tela);
-        return 1;
+    // Carrega a imagem do escudo
+    ALLEGRO_BITMAP* escudo = al_load_bitmap("escudo_alternativa.png");
+    if (!escudo) {
+        printf("Aviso: escudo_alternativa.png nao encontrado!\n");
     }
 
-    ALLEGRO_FONT* fonte_equacao =
-        al_load_ttf_font(
-            "C:/Windows/Fonts/arial.ttf",
-            20,
-            0
-        );
-
-    if (!fonte_equacao) {
+    if (!fonte || !fonte_equacao) {
+        al_destroy_bitmap(escudo);
         al_destroy_font(fonte);
+        al_destroy_font(fonte_equacao);
         al_destroy_event_queue(fila_eventos);
         al_destroy_timer(timer);
         fundo_finalizar();
@@ -150,31 +133,13 @@ int main(void)
     // OBJETO DO CRONOMETRO
     Tempo tempo;
 
-    jogador_inicializar(&jogador);
-    tiros_inicializar(tiros);
+    // Vidas do jogador (reiniciadas a cada partida)
+    int vidas = VIDAS_INICIAIS;
 
-    // Inicializa o inimigo
-    inimigo_inicializar(
-        &inimigo,
-        750,
-        ALTURA_TELA - 50
-    );
-
-    // Primeira equacao e alternativas
-    equacao_gerar_nova(&equacao);
-
-    pergunta_de_equacao(
-        &pergunta,
-        &equacao,
-        LARGURA_TELA,
-        80,
-        60
-    );
-
+    // Frames de espera ate a proxima pergunta
     int espera_proxima = 0;
 
-    // MENU
-   // ESTADO DE ENTRADA
+    // ESTADO DE ENTRADA
     ALLEGRO_KEYBOARD_STATE estado_teclado;
 
     float mouse_x = LARGURA_TELA / 2;
@@ -203,14 +168,17 @@ int main(void)
             ALTURA_TELA - 50
         );
 
+        vidas = VIDAS_INICIAIS;
+
         equacao_gerar_nova(&equacao);
 
+        // Y = 60 e altura = 100 para aumentar o escudo
         pergunta_de_equacao(
             &pergunta,
             &equacao,
             LARGURA_TELA,
-            80,
-            60
+            60,
+            100
         );
 
         espera_proxima = 0;
@@ -267,7 +235,7 @@ int main(void)
                 }
             }
 
-            // ATUALIZACAO DO JOGO
+            // ATUALIZACAO DO JOGO (60 FPS)
             if (evento.type == ALLEGRO_EVENT_TIMER)
             {
                 tempo_atualizar(&tempo);
@@ -346,10 +314,18 @@ int main(void)
                         }
                         else
                         {
-                            // ERRO: RETIRA 7 SEGUNDOS
+                            // ERRO: RETIRA 7 SEGUNDOS E PERDE UMA VIDA
                             tempo_adicionar(&tempo, -7.0);
+                            vidas--;
                         }
                     }
+                }
+
+                // GAME OVER: ACABARAM AS VIDAS, VOLTA AO MENU
+                if (vidas <= 0)
+                {
+                    jogando = false;
+                    break;
                 }
 
                 // PROXIMA PERGUNTA
@@ -365,8 +341,8 @@ int main(void)
                             &pergunta,
                             &equacao,
                             LARGURA_TELA,
-                            80,
-                            60
+                            60,
+                            100
                         );
                     }
                 }
@@ -382,10 +358,12 @@ int main(void)
                     ALTURA_TELA
                 );
 
+                // Passa o escudo para a funcao
                 pergunta_desenhar(
                     &pergunta,
                     fonte_equacao,
-                    LARGURA_TELA
+                    LARGURA_TELA,
+                    escudo
                 );
 
                 jogador_desenhar(&jogador);
@@ -401,6 +379,9 @@ int main(void)
 
                 tempo_desenhar(&tempo, fonte);
 
+                // VIDAS (por ultimo, pra ficar por cima de tudo)
+                vidas_desenhar(vidas);
+
                 al_flip_display();
             }
         }
@@ -415,6 +396,7 @@ int main(void)
     }
 
     // FINALIZACAO: SO ACONTECE AO ESCOLHER SAIR OU FECHAR A JANELA
+    al_destroy_bitmap(escudo);
     al_destroy_font(fonte);
     al_destroy_font(fonte_equacao);
     al_destroy_event_queue(fila_eventos);

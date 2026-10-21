@@ -1,119 +1,144 @@
-#include "alternativa.h"
-#include <allegro5/allegro_primitives.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#define _CRT_SECURE_NO_WARNINGS
 
+#include "alternativa.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <allegro5/allegro_primitives.h>
+
+// Cria a pergunta com os textos passados
 void pergunta_criar(Pergunta* p, const char* enunciado,
     const char* textos[], int qtd, int idx_correta,
     float largura_tela, float y, float altura)
 {
-    if (qtd > MAX_ALTERNATIVAS) qtd = MAX_ALTERNATIVAS;
-
-    strncpy_s(p->enunciado, sizeof(p->enunciado), enunciado, _TRUNCATE);
+    if (!p) return;
+    strncpy(p->enunciado, enunciado, sizeof(p->enunciado) - 1);
     p->qtd = qtd;
     p->respondida = false;
 
-    float margem = 20.0f;
-    float w = (largura_tela - margem * (qtd + 1)) / qtd;
+    float espaco = 20.0f;
+
+    float largura_botao = (largura_tela - (espaco * (qtd + 1))) / qtd;
+    if (largura_botao > 220.0f) largura_botao = 220.0f;
 
     for (int i = 0; i < qtd; i++) {
-        Alternativa* a = &p->alt[i];
-        a->x = margem + i * (w + margem);
-        a->y = y;
-        a->w = w;
-        a->h = altura;
-        a->correta = (i == idx_correta);
-        a->estado = ALT_NORMAL;
-        strncpy_s(a->texto, sizeof(a->texto), textos[i], _TRUNCATE);
+        p->alt[i].x = espaco + (i * (largura_botao + espaco));
+        p->alt[i].x = (largura_tela - (qtd * largura_botao + (qtd - 1) * espaco)) / 2.0f + i * (largura_botao + espaco);
+
+        p->alt[i].y = y;
+        p->alt[i].w = largura_botao;
+        p->alt[i].h = altura;
+
+        strncpy(p->alt[i].texto, textos[i], sizeof(p->alt[i].texto) - 1);
+        p->alt[i].correta = (i == idx_correta);
+        p->alt[i].estado = ALT_NORMAL;
     }
 }
 
-void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tela)
+// Monta as 4 alternativas a partir da equação
+void pergunta_de_equacao(Pergunta* p, const Equacao* eq,
+    float largura_tela, float y, float altura)
 {
-    al_draw_text(fonte, al_map_rgb(255, 255, 255), largura_tela / 2, 20,
-        ALLEGRO_ALIGN_CENTRE, p->enunciado);
+    if (!p || !eq) return;
 
-    for (int i = 0; i < p->qtd; i++) {
-        const Alternativa* a = &p->alt[i];
+    char textos[4][64];
+    int idx_correta = rand() % 4;
+    int resposta_certa = eq->resposta_correta;
 
-        ALLEGRO_COLOR cor = al_map_rgb(60, 60, 120);          // normal
-        if (a->estado == ALT_CERTA)  cor = al_map_rgb(40, 160, 60);
-        if (a->estado == ALT_ERRADA) cor = al_map_rgb(190, 40, 40);
-
-        al_draw_filled_rectangle(a->x, a->y, a->x + a->w, a->y + a->h, cor);
-        al_draw_rectangle(a->x, a->y, a->x + a->w, a->y + a->h,
-            al_map_rgb(255, 255, 255), 2);
-        al_draw_text(fonte, al_map_rgb(255, 255, 255),
-            a->x + a->w / 2, a->y + a->h / 2 - al_get_font_line_height(fonte) / 2,
-            ALLEGRO_ALIGN_CENTRE, a->texto);
+    for (int i = 0; i < 4; i++) {
+        if (i == idx_correta) {
+            snprintf(textos[i], sizeof(textos[i]), "%d", resposta_certa);
+        }
+        else {
+            int erro = (rand() % 11) - 5;
+            if (erro == 0) erro = 1;
+            int resposta_errada = resposta_certa + erro;
+            if (resposta_errada < 0) resposta_errada = resposta_certa + 1;
+            snprintf(textos[i], sizeof(textos[i]), "%d", resposta_errada);
+        }
     }
+
+    const char* ptrs[4] = { textos[0], textos[1], textos[2], textos[3] };
+    pergunta_criar(p, eq->texto, ptrs, 4, idx_correta, largura_tela, y, altura);
 }
 
+// Testa colisão do tiro com as alternativas
 int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th)
 {
-    if (p->respondida) return -1;
+    if (!p || p->respondida) return -1;
 
     for (int i = 0; i < p->qtd; i++) {
-        Alternativa* a = &p->alt[i];
-
-        bool colidiu = tx < a->x + a->w && tx + tw > a->x &&
-            ty < a->y + a->h && ty + th > a->y;
-        if (!colidiu) continue;
-
-        p->respondida = true;
-        if (a->correta) {
-            a->estado = ALT_CERTA;
-            return 1;
+        if (tx >= p->alt[i].x && tx <= p->alt[i].x + p->alt[i].w &&
+            ty >= p->alt[i].y && ty <= p->alt[i].y + p->alt[i].h)
+        {
+            p->respondida = true;
+            if (p->alt[i].correta) {
+                p->alt[i].estado = ALT_CERTA;
+                return 1; // Acertou
+            }
+            else {
+                p->alt[i].estado = ALT_ERRADA;
+                // Marca a certa de verde também, para o jogador ver qual era a correta
+                for (int j = 0; j < p->qtd; j++) {
+                    if (p->alt[j].correta) p->alt[j].estado = ALT_CERTA;
+                }
+                return 0; // Errou
+            }
         }
-        a->estado = ALT_ERRADA;
-        // mostra qual era a certa
-        for (int j = 0; j < p->qtd; j++)
-            if (p->alt[j].correta) p->alt[j].estado = ALT_CERTA;
-        return 0;
     }
     return -1;
 }
 
-void pergunta_de_equacao(Pergunta* p, const Equacao* eq,
-    float largura_tela, float y, float altura)
-{
-    int valores[MAX_ALTERNATIVAS];
-    valores[0] = eq->resposta_correta;
-    int n = 1;
+// Desenha as alternativas com o texto colorido
+void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tela, ALLEGRO_BITMAP* escudo) {
+    if (p == NULL || fonte == NULL) return;
 
-    // gera 3 respostas erradas, diferentes entre si e da certa
-    while (n < MAX_ALTERNATIVAS) {
-        int off = (rand() % 10) + 1;          // 1..10
-        if (rand() % 2) off = -off;
-        int v = eq->resposta_correta + off;
-        if (v < 0) continue;
-
-        bool repetido = false;
-        for (int i = 0; i < n; i++)
-            if (valores[i] == v) repetido = true;
-        if (repetido) continue;
-
-        valores[n++] = v;
+    float img_w = 0, img_h = 0;
+    if (escudo != NULL) {
+        img_w = al_get_bitmap_width(escudo);
+        img_h = al_get_bitmap_height(escudo);
     }
 
-    // embaralha (Fisher-Yates); a certa começa no índice 0
-    int idx_correta = 0;
-    for (int i = MAX_ALTERNATIVAS - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        int tmp = valores[i]; valores[i] = valores[j]; valores[j] = tmp;
-    }
-    for (int i = 0; i < MAX_ALTERNATIVAS; i++)
-        if (valores[i] == eq->resposta_correta) idx_correta = i;
+    for (int i = 0; i < p->qtd; i++) {
+        float cx = p->alt[i].x;
+        float cy = p->alt[i].y;
+        float w = p->alt[i].w;
+        float h = p->alt[i].h;
 
-    char bufs[MAX_ALTERNATIVAS][16];
-    const char* textos[MAX_ALTERNATIVAS];
-    for (int i = 0; i < MAX_ALTERNATIVAS; i++) {
-        snprintf(bufs[i], sizeof(bufs[i]), "%d", valores[i]);
-        textos[i] = bufs[i];
-    }
+        // 1. Desenha o Escudo (mantendo o branco original)
+        if (escudo != NULL) {
+            al_draw_scaled_bitmap(escudo,
+                0, 0, img_w, img_h,
+                cx, cy, w, h,
+                0
+            );
+        }
+        else {
+            // Fallback (caso a imagem não carregue)
+            al_draw_filled_rectangle(cx, cy, cx + w, cy + h, al_map_rgb(45, 45, 150));
+        }
 
-    // enunciado vazio: a equação já é desenhada pelo equacao_desenhar
-    pergunta_criar(p, "", textos, MAX_ALTERNATIVAS, idx_correta,
-        largura_tela, y, altura);
+        // 2. Define a cor do texto baseado no estado
+        ALLEGRO_COLOR cor_texto = al_map_rgb(255, 255, 255); // Branco padrão
+
+        if (p->respondida) {
+            if (p->alt[i].estado == ALT_CERTA) {
+                cor_texto = al_map_rgb(50, 255, 50); // Verde neon
+            }
+            else if (p->alt[i].estado == ALT_ERRADA) {
+                cor_texto = al_map_rgb(255, 50, 50); // Vermelho vivo
+            }
+        }
+
+        // 3. Desenha o Texto por cima do Escudo
+        int altura_fonte = al_get_font_line_height(fonte);
+        float texto_x = cx + (w / 2.0f);
+        float texto_y = cy + (h / 2.0f) - (altura_fonte / 2.0f);
+
+        // Sombra preta para dar contraste
+        al_draw_text(fonte, al_map_rgb(0, 0, 0), texto_x + 2, texto_y + 2, ALLEGRO_ALIGN_CENTER, p->alt[i].texto);
+
+        // Número colorido (Verde, Vermelho ou Branco)
+        al_draw_text(fonte, cor_texto, texto_x, texto_y, ALLEGRO_ALIGN_CENTER, p->alt[i].texto);
+    }
 }
