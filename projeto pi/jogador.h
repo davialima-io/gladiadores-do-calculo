@@ -5,6 +5,8 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
+
+// Struct pro jogador
 typedef struct
 {
     float x, y;
@@ -17,6 +19,8 @@ typedef struct
 
     int no_chao;
     int espaco_anterior;
+
+    int vidas;
 
 } Jogador;
 
