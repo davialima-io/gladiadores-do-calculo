@@ -5,7 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <stdbool.h>
 
-#define VIDA_MAXIMA_INIMIGO 5 // Defina o valor caso ainda não tenha no jogo.h
+#define VIDA_MAXIMA_INIMIGO 10
 
 typedef struct
 {

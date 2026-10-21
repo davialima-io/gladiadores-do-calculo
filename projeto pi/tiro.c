@@ -60,8 +60,7 @@ void tiro_disparar(
         );
 
 
-        // Não dispara se o mouse estiver exatamente
-        // sobre o centro do jogador.
+        // Não dispara se o mouse estiver exatamente sobre o centro do jogador.
         if (distancia == 0)
         {
             return;
@@ -73,10 +72,10 @@ void tiro_disparar(
         direcao_y /= distancia;
 
 
-        /*
-            O tiro nasce 30 pixels à frente
-            do jogador para não começar dentro dele.
-        */
+        
+        // O tiro nasce 30 pixels à frente do jogador para não começar dentro dele.
+          
+      
 
         tiros[i].x =
             jogador_x +

@@ -6,20 +6,20 @@ void inimigo_inicializar(Inimigo* inimigo, float x, float y)
 {
     inimigo->tamanho = 50;
     inimigo->x = x;
-
-    // Força a altura exata em cima da plataforma de pedra (igual ao jogador)
     inimigo->y = (ALTURA_TELA - 100) - inimigo->tamanho;
 
     inimigo->velocidade = 3.5f;
-    inimigo->direcao = -1; // Começa a andar para a esquerda
+    inimigo->direcao = -1;
 
     inimigo->velocidade_y = 0;
     inimigo->gravidade = 0.5f;
     inimigo->forca_pulo = -10.0f;
     inimigo->no_chao = 1;
 
-    inimigo->vida_maxima = VIDA_MAXIMA_INIMIGO;
-    inimigo->vida = inimigo->vida_maxima;
+    // FORÇA DIRETAMENTE AQUI PARA TESTAR:
+    inimigo->vida_maxima = 10;
+    inimigo->vida = 10;
+
     inimigo->tempo_pulo = 0;
 }
 
