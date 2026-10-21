@@ -8,7 +8,7 @@
 
 
 /* QUANTIDADE DE FRAMES Nossa animação possui 240 imagens*/
-#define TOTAL_FRAMES 60
+#define TOTAL_FRAMES 240
 /* FPS DA ANIMAÇÃO O jogo continua rodando a 60 FPS, mas o fundo troca de imagem 30 vezes por segundo*/
 #define FPS_FUNDO 30.0
 /* FRAME ATUAL  Guarda a imagem que está sendo desenhada*/
@@ -57,7 +57,7 @@ void fundo_atualizar()
 
 /* Calcula quanto tempo cada frame deve permanecer na tela. 30 FPS:   1 / 30 = aproximadamente0,033 segundos */
 	double intervalo =
-		1.0 / FPS_FUNDO;
+		0.5 / FPS_FUNDO;
 /* Ainda não passou tempo suficiente?  Então mantém o frame atua */
 	if (tempo_atual - ultimo_frame < intervalo)
 	{
@@ -86,8 +86,7 @@ void fundo_atualizar()
 
 
 /* Carrega o próximo frame  */
-	ALLEGRO_BITMAP* novo_frame =
-	al_load_bitmap(nome_arquivo);
+	ALLEGRO_BITMAP* novo_frame = al_load_bitmap(nome_arquivo);
 /* Só substitui o frame atual se o novo foi carregado*/
 	if (novo_frame)
 	{

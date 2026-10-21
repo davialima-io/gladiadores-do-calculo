@@ -150,6 +150,7 @@
     <ClCompile Include="jogo.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="menu.c" />
+    <ClCompile Include="tempo.c" />
     <ClCompile Include="tiro.c" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="jogador.h" />
     <ClInclude Include="jogo.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="tempo.h" />
     <ClInclude Include="tiro.h" />
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 #ifndef TIRO_H
 #define TIRO_H
 #define MAX_TIROS 50
-#define VIDA_MAXIMA_INIMIGO 3
+
 #include <stdbool.h>
 
 

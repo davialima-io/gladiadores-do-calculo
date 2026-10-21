@@ -7,10 +7,4 @@
 #define LARGURA_TELA 800
 #define ALTURA_TELA 600
 
-
-
-
-
-
-
 #endif
