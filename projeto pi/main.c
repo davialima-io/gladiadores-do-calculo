@@ -90,6 +90,8 @@ int main(void)
 
     if (!fonte || !fonte_equacao) {
         al_destroy_bitmap(escudo);
+        al_destroy_font(fonte);
+        al_destroy_font(fonte_equacao);
         al_destroy_event_queue(fila_eventos);
         al_destroy_timer(timer);
         fundo_finalizar();
@@ -110,14 +112,18 @@ int main(void)
     // Inicializa o inimigo na posicao correta do chao
     inimigo_inicializar(&inimigo, 750, ALTURA_TELA - 50);
 
+    // Vidas do jogador
+    int vidas = VIDAS_INICIAIS;
+
     // Primeira equacao e suas alternativas
-    // AQUI MUDAMOS Y PARA 60 E A ALTURA PARA 100 PARA AUMENTAR O ESCUDO
+    // Y = 60 e altura = 100 para aumentar o escudo
     equacao_gerar_nova(&equacao);
     pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
 
     int espera_proxima = 0; // frames de espera ate a proxima pergunta
 
-    // CHAMAR MENU
+    // CHAMAR MENU: o menu tem seu proprio loop interno.
+    // So retorna quando o jogador escolhe JOGAR ou SAIR.
     int opcao = menu_executar(tela);
 
     if (opcao == MENU_SAIR) {
@@ -135,7 +141,6 @@ int main(void)
     ALLEGRO_KEYBOARD_STATE estado_teclado;
     float mouse_x = LARGURA_TELA / 2;
     float mouse_y = ALTURA_TELA / 2;
-
     bool executando = true;
 
     // O timer so comeca a contar agora, depois do menu
@@ -161,7 +166,6 @@ int main(void)
         if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
             mouse_x = evento.mouse.x;
             mouse_y = evento.mouse.y;
-
             if (evento.mouse.button == 1) {
                 tiro_disparar(
                     tiros,
@@ -177,6 +181,7 @@ int main(void)
         if (evento.type == ALLEGRO_EVENT_TIMER) {
 
             al_get_keyboard_state(&estado_teclado);
+
             jogador_atualizar(&jogador, &estado_teclado);
 
             tiros_atualizar(tiros);
@@ -207,25 +212,52 @@ int main(void)
                         // Resposta correta
                     }
                     else {
-                        // Resposta incorreta
+                        // Resposta incorreta: perde uma vida
+                        vidas--;
                     }
                 }
+            }
+
+            // GAME OVER: acabaram as vidas, reseta a partida e volta pro menu
+            if (vidas <= 0) {
+                vidas = VIDAS_INICIAIS;
+
+                jogador_inicializar(&jogador);
+                tiros_inicializar(tiros);
+                inimigo_inicializar(&inimigo, 750, ALTURA_TELA - 50);
+
+                equacao_gerar_nova(&equacao);
+                pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
+                espera_proxima = 0;
+
+                // Pausa o timer enquanto o menu estiver aberto
+                al_stop_timer(timer);
+
+                opcao = menu_executar(tela);
+
+                if (opcao == MENU_SAIR) {
+                    executando = false;
+                    continue;
+                }
+
+                // Descarta eventos acumulados e retoma o jogo
+                al_flush_event_queue(fila_eventos);
+                al_start_timer(timer);
+                continue;
             }
 
             // Proxima pergunta depois do tempo de espera
             if (pergunta.respondida && --espera_proxima <= 0) {
                 equacao_gerar_nova(&equacao);
-                // MUDANCA AQUI TAMBEM (60, 100)
                 pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
             }
 
             // RENDERIZACAO
             fundo_atualizar();
             fundo_desenhar();
-
             equacao_desenhar(&equacao, fonte_equacao, LARGURA_TELA, ALTURA_TELA);
 
-            // Passa o escudo para a funcao!
+            // Passa o escudo para a funcao
             pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA, escudo);
 
             jogador_desenhar(&jogador);
@@ -233,12 +265,15 @@ int main(void)
             tiros_desenhar(tiros);
             inimigo_desenhar(&inimigo);
 
+            // VIDAS (por ultimo, pra ficar por cima de tudo)
+            vidas_desenhar(vidas);
+
             al_flip_display();
         }
     }
 
     // FINALIZACAO
-    al_destroy_bitmap(escudo); // Destroi a imagem do escudo
+    al_destroy_bitmap(escudo);
     al_destroy_font(fonte);
     al_destroy_font(fonte_equacao);
     al_destroy_event_queue(fila_eventos);

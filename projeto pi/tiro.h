@@ -2,10 +2,13 @@
 #ifndef TIRO_H
 #define TIRO_H
 
+#define MAX_TIROS 50
+#define VIDA_MAXIMA_INIMIGO 3
+
 #include <stdbool.h>
 
 
-// Representa um projétil disparado pelo jogador
+// Representa um projÃ©til disparado pelo jogador
 typedef struct
 {
     float x;
@@ -27,7 +30,7 @@ void tiros_inicializar(
 );
 
 
-// Cria um novo tiro na direção do mouse
+// Cria um novo tiro na direÃ§Ã£o do mouse
 void tiro_disparar(
     Tiro tiros[],
     float jogador_x,
@@ -37,7 +40,7 @@ void tiro_disparar(
 );
 
 
-// Atualiza a posição dos tiros
+// Atualiza a posiÃ§Ã£o dos tiros
 void tiros_atualizar(
     Tiro tiros[]
 );

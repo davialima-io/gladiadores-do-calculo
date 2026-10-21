@@ -1,6 +1,7 @@
 #include "inimigo.h"
 #include "jogo.h"
 #include <stdlib.h>
+#define VIDA_MAXIMA_INIMIGO 3
 
 void inimigo_inicializar(Inimigo* inimigo, float x, float y)
 {
@@ -16,7 +17,7 @@ void inimigo_inicializar(Inimigo* inimigo, float x, float y)
     inimigo->forca_pulo = -10.0f;
     inimigo->no_chao = 1;
 
-    // FORÇA DIRETAMENTE AQUI PARA TESTAR:
+    // FORÇA DIRETAMENTE PARA TESTAR:
     inimigo->vida_maxima = 10;
     inimigo->vida = 10;
 
@@ -42,7 +43,7 @@ void inimigo_atualizar(Inimigo* inimigo, float largura_tela, float altura_chao)
     if (inimigo->tempo_pulo >= 100) {
         inimigo->tempo_pulo = 0;
 
-        if (inimigo->no_chao && (rand() % 2 == 1)) {
+        if (inimigo->no_chao && (rand() % 2 == 0)) {
             inimigo->velocidade_y = inimigo->forca_pulo;
             inimigo->no_chao = 0;
         }
