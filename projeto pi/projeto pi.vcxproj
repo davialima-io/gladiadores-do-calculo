@@ -406,6 +406,7 @@
     <Image Include="fundo_frames\frame_0238.jpg" />
     <Image Include="fundo_frames\frame_0239.jpg" />
     <Image Include="fundo_frames\frame_0240.jpg" />
+    <Image Include="menu_fundo.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
