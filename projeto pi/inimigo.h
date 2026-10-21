@@ -1,12 +1,12 @@
-
 #ifndef INIMIGO_H
 #define INIMIGO_H
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
+#include <stdbool.h>
 
+#define VIDA_MAXIMA_INIMIGO 5 // Defina o valor caso ainda não tenha no jogo.h
 
-// inimigo na arena
 typedef struct
 {
     float x;
@@ -14,45 +14,25 @@ typedef struct
 
     float tamanho;
     float velocidade;
+    int direcao; // 1 para direita, -1 para esquerda
 
-    int direcao;
+    // Variáveis de pulo e gravidade
+    float velocidade_y;
+    float gravidade;
+    float forca_pulo;
+    int no_chao;
 
     int vida;
     int vida_maxima;
 
+    int tempo_pulo; // Controla quando ele decide pular aleatoriamente
+
 } Inimigo;
 
-
-// Coloca o inimigo na posição inicial
-void inimigo_inicializar(
-    Inimigo* inimigo
-);
-
-
-// Atualiza o movimento do inimigo
-void inimigo_atualizar(
-    Inimigo* inimigo
-);
-
-
-// Aplica dano ao inimigo
-void inimigo_receber_dano(
-    Inimigo* inimigo
-);
-
-
-// Verifica se um tiro acertou o inimigo
-bool inimigo_colidiu_com_tiro(
-    Inimigo* inimigo,
-    float tiro_x,
-    float tiro_y
-);
-
-
-// Desenha o inimigo e sua barra de vida
-void inimigo_desenhar(
-    Inimigo* inimigo
-);
-
+void inimigo_inicializar(Inimigo* inimigo, float x, float y);
+void inimigo_atualizar(Inimigo* inimigo, float largura_tela, float altura_chao);
+void inimigo_receber_dano(Inimigo* inimigo, float x_inicial, float altura_chao);
+bool inimigo_colidiu_com_tiro(Inimigo* inimigo, float tiro_x, float tiro_y);
+void inimigo_desenhar(Inimigo* inimigo);
 
 #endif

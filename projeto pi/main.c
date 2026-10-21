@@ -16,20 +16,20 @@
 
 int main(void)
 {
-    // INICIALIZAÇÃO DO ALLEGRO
+    // INICIALIZACAO DO ALLEGRO
     if (!al_init()) {
         return 1;
     }
 
-    // Semente para números aleatórios (usada nas equações)
+    // Semente para numeros aleatorios (usada nas equacoes)
     srand((unsigned)time(NULL));
 
-    // Primitivas (retângulos, círculos e linhas)
+    // Primitivas (retangulos, circulos e linhas)
     if (!al_init_primitives_addon()) {
         return 1;
     }
 
-    // Imagens (necessário para o menu_fundo.png)
+    // Imagens (necessario para o menu_fundo.png)
     if (!al_init_image_addon()) {
         return 1;
     }
@@ -54,13 +54,13 @@ int main(void)
         return 1;
     }
 
-    // CRIAÇÃO DA JANELA
+    // CRIACAO DA JANELA
     ALLEGRO_DISPLAY* tela = al_create_display(LARGURA_TELA, ALTURA_TELA);
     if (!tela) {
         return 1;
     }
 
-    // INICIALIZAÇÃO DO FUNDO
+    // INICIALIZACAO DO FUNDO
     if (!fundo_inicializar()) {
         al_destroy_display(tela);
         return 1;
@@ -118,17 +118,19 @@ int main(void)
 
     jogador_inicializar(&jogador);
     tiros_inicializar(tiros);
-    inimigo_inicializar(&inimigo);
 
-    // Primeira equação e suas alternativas
+    // Inicializa o inimigo na posicao correta do chao
+    inimigo_inicializar(&inimigo, 750, ALTURA_TELA - 50);
+
+    // Primeira equacao e suas alternativas
     equacao_gerar_nova(&equacao);
     pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
 
-    int espera_proxima = 0; // frames de espera até a próxima pergunta
+    int espera_proxima = 0; // frames de espera ate a proxima pergunta
 
     // CHAMAR MENU
-    // O menu tem seu próprio loop interno.
-    // Só retorna quando o jogador escolhe JOGAR ou SAIR.
+    // O menu tem seu proprio loop interno.
+    // So retorna quando o jogador escolhe JOGAR ou SAIR.
     int opcao = menu_executar(tela);
 
     if (opcao == MENU_SAIR) {
@@ -148,7 +150,7 @@ int main(void)
 
     bool executando = true;
 
-    // O timer só começa a contar agora, depois do menu
+    // O timer so comeca a contar agora, depois do menu
     al_start_timer(timer);
 
     // LOOP PRINCIPAL
@@ -183,28 +185,28 @@ int main(void)
             }
         }
 
-        // ATUALIZAÇÃO DO JOGO (60 FPS)
+        // ATUALIZACAO DO JOGO (60 FPS)
         if (evento.type == ALLEGRO_EVENT_TIMER) {
 
             al_get_keyboard_state(&estado_teclado);
             jogador_atualizar(&jogador, &estado_teclado);
 
             tiros_atualizar(tiros);
-            inimigo_atualizar(&inimigo);
 
-            // COLISÕES: TIROS X INIMIGO
+            // Atualiza o inimigo passando o chao correto
+            inimigo_atualizar(&inimigo, LARGURA_TELA, ALTURA_TELA);
+
+            // COLISOES: TIROS X INIMIGO
             for (int i = 0; i < MAX_TIROS; i++) {
-                if (!tiros[i].ativo) {
-                    continue;
-                }
+                if (!tiros[i].ativo) continue;
 
                 if (inimigo_colidiu_com_tiro(&inimigo, tiros[i].x, tiros[i].y)) {
                     tiros[i].ativo = false;
-                    inimigo_receber_dano(&inimigo);
+                    inimigo_receber_dano(&inimigo, 750, ALTURA_TELA);
                 }
             }
 
-            // COLISÕES: TIROS X ALTERNATIVAS DA EQUAÇÃO
+            // COLISOES: TIROS X ALTERNATIVAS DA EQUACAO
             for (int i = 0; i < MAX_TIROS; i++) {
                 if (!tiros[i].ativo) continue;
 
@@ -214,25 +216,27 @@ int main(void)
                     espera_proxima = 120; // 2 segundos a 60 FPS
 
                     if (r == 1) {
-                        // Resposta correta: pontos += 10;
+                        // Resposta correta
                     }
                     else {
-                        // Resposta incorreta: vidas--;
+                        // Resposta incorreta
                     }
                 }
             }
 
-            // Próxima pergunta depois do tempo de espera
+            // Proxima pergunta depois do tempo de espera
             if (pergunta.respondida && --espera_proxima <= 0) {
                 equacao_gerar_nova(&equacao);
                 pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
             }
 
-            // DESENHO
+            // RENDERIZACAO
             fundo_atualizar();
             fundo_desenhar();
+
             equacao_desenhar(&equacao, fonte_equacao, LARGURA_TELA, ALTURA_TELA);
             pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA);
+
             jogador_desenhar(&jogador);
             jogador_desenhar_arma(&jogador, mouse_x, mouse_y);
             tiros_desenhar(tiros);
@@ -242,7 +246,7 @@ int main(void)
         }
     }
 
-    // FINALIZAÇÃO
+    // FINALIZACAO
     al_destroy_font(fonte);
     al_destroy_font(fonte_equacao);
     al_destroy_event_queue(fila_eventos);
