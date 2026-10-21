@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -29,30 +30,18 @@ int main(void)
         return 1;
     }
 
-    // Imagens (necessario para o menu_fundo.png)
+    // Imagens (necessario para o menu_fundo.png e escudo)
     if (!al_init_image_addon()) {
         return 1;
     }
 
-    // Teclado
-    if (!al_install_keyboard()) {
-        return 1;
-    }
-
-    // Mouse
-    if (!al_install_mouse()) {
-        return 1;
-    }
+    // Teclado e Mouse
+    if (!al_install_keyboard()) return 1;
+    if (!al_install_mouse()) return 1;
 
     // Fontes
-    if (!al_init_font_addon()) {
-        return 1;
-    }
-
-    // Fontes TrueType (TTF)
-    if (!al_init_ttf_addon()) {
-        return 1;
-    }
+    if (!al_init_font_addon()) return 1;
+    if (!al_init_ttf_addon()) return 1;
 
     // CRIACAO DA JANELA
     ALLEGRO_DISPLAY* tela = al_create_display(LARGURA_TELA, ALTURA_TELA);
@@ -89,19 +78,18 @@ int main(void)
     al_register_event_source(fila_eventos, al_get_keyboard_event_source());
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
-    // FONTES
+    // FONTES E IMAGENS
     ALLEGRO_FONT* fonte = al_create_builtin_font();
-    if (!fonte) {
-        al_destroy_event_queue(fila_eventos);
-        al_destroy_timer(timer);
-        fundo_finalizar();
-        al_destroy_display(tela);
-        return 1;
+    ALLEGRO_FONT* fonte_equacao = al_load_ttf_font("C:/Windows/Fonts/arial.ttf", 20, 0);
+
+    // Carrega a imagem do escudo
+    ALLEGRO_BITMAP* escudo = al_load_bitmap("escudo_alternativa.png");
+    if (!escudo) {
+        printf("Aviso: escudo_alternativa.png nao encontrado!\n");
     }
 
-    ALLEGRO_FONT* fonte_equacao = al_load_ttf_font("C:/Windows/Fonts/arial.ttf", 20, 0);
-    if (!fonte_equacao) {
-        al_destroy_font(fonte);
+    if (!fonte || !fonte_equacao) {
+        al_destroy_bitmap(escudo);
         al_destroy_event_queue(fila_eventos);
         al_destroy_timer(timer);
         fundo_finalizar();
@@ -123,17 +111,17 @@ int main(void)
     inimigo_inicializar(&inimigo, 750, ALTURA_TELA - 50);
 
     // Primeira equacao e suas alternativas
+    // AQUI MUDAMOS Y PARA 60 E A ALTURA PARA 100 PARA AUMENTAR O ESCUDO
     equacao_gerar_nova(&equacao);
-    pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
+    pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
 
     int espera_proxima = 0; // frames de espera ate a proxima pergunta
 
     // CHAMAR MENU
-    // O menu tem seu proprio loop interno.
-    // So retorna quando o jogador escolhe JOGAR ou SAIR.
     int opcao = menu_executar(tela);
 
     if (opcao == MENU_SAIR) {
+        al_destroy_bitmap(escudo);
         al_destroy_font(fonte);
         al_destroy_font(fonte_equacao);
         al_destroy_event_queue(fila_eventos);
@@ -227,7 +215,8 @@ int main(void)
             // Proxima pergunta depois do tempo de espera
             if (pergunta.respondida && --espera_proxima <= 0) {
                 equacao_gerar_nova(&equacao);
-                pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
+                // MUDANCA AQUI TAMBEM (60, 100)
+                pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 60, 100);
             }
 
             // RENDERIZACAO
@@ -235,7 +224,9 @@ int main(void)
             fundo_desenhar();
 
             equacao_desenhar(&equacao, fonte_equacao, LARGURA_TELA, ALTURA_TELA);
-            pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA);
+
+            // Passa o escudo para a funcao!
+            pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA, escudo);
 
             jogador_desenhar(&jogador);
             jogador_desenhar_arma(&jogador, mouse_x, mouse_y);
@@ -247,6 +238,7 @@ int main(void)
     }
 
     // FINALIZACAO
+    al_destroy_bitmap(escudo); // Destroi a imagem do escudo
     al_destroy_font(fonte);
     al_destroy_font(fonte_equacao);
     al_destroy_event_queue(fila_eventos);
