@@ -7,11 +7,11 @@
 #define LARGURA_TELA 800
 #define ALTURA_TELA 600
 
-// Quantidade de vidas do jogador no começo da partida
+// Quantidade de vidas do jogador no comeÃ§o da partida
 #define VIDAS_INICIAIS 3
 
 
-// Desenha os corações de vida 
+// Desenha os coraÃ§Ãµes de vida
 void vidas_desenhar(int vidas_atuais);
 
 #endif

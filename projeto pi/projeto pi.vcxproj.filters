@@ -36,6 +36,12 @@
     <ClCompile Include="fundo.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+    <ClCompile Include="alternativa.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="equacao.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inimigo.h">
@@ -56,14 +62,17 @@
     <ClInclude Include="fundo.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="alternativa.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="equacao.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="fundo_frames\Image.jpg">
-      <Filter>Arquivos de Recurso</Filter>
-    </Image>
     <Image Include="fundo_frames\frame_0001.jpg">
       <Filter>Arquivos de Recurso</Filter>
     </Image>
@@ -782,6 +791,11 @@
       <Filter>Arquivos de Recurso</Filter>
     </Image>
     <Image Include="fundo_frames\frame_0240.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="menu_fundo.png">
       <Filter>Arquivos de Recurso</Filter>
     </Image>
   </ItemGroup>

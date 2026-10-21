@@ -1,137 +1,77 @@
 #include "jogador.h"
 #include <math.h>
 
+#define LARGURA_TELA 800
+#define ALTURA_TELA 535
 
-void jogador_inicializar(
-    Jogador* jogador
-)
+void jogador_inicializar(Jogador* jogador)
 {
-    // Posição inicial do jogador
-    jogador->x = 375;
-    jogador->y = 275;
+    jogador->x = 445;
+    jogador->y = ALTURA_TELA - 100;
 
-    // Tamanho do quadrado que representa o jogador
     jogador->tamanho = 50;
-
-    // Velocidade de movimentação
     jogador->velocidade = 5;
+
+    jogador->velocidade_y = 0;
+    jogador->gravidade = 0.5f;
+    jogador->forca_pulo = -12.0f;
+
+    jogador->no_chao = 0;
+    jogador->espaco_anterior = 0;
 }
 
-
-void jogador_atualizar(
-    Jogador* jogador,
-    ALLEGRO_KEYBOARD_STATE* estado_teclado
-)
+void jogador_atualizar(Jogador* jogador, ALLEGRO_KEYBOARD_STATE* estado_teclado)
 {
-    // Direção do movimento.
-    // Começamos em zero porque o jogador pode ficar parado.
     float movimento_x = 0;
-    float movimento_y = 0;
 
-
-    // W movimenta para cima
-    if (al_key_down(
-        estado_teclado,
-        ALLEGRO_KEY_W))
-    {
-        movimento_y -= 1;
-    }
-
-
-    // S movimenta para baixo
-    if (al_key_down(
-        estado_teclado,
-        ALLEGRO_KEY_S))
-    {
-        movimento_y += 1;
-    }
-
-
-    // A movimenta para a esquerda
-    if (al_key_down(
-        estado_teclado,
-        ALLEGRO_KEY_A))
-    {
+    // Movimento horizontal
+    if (al_key_down(estado_teclado, ALLEGRO_KEY_A)) {
         movimento_x -= 1;
     }
-
-
-    // D movimenta para a direita
-    if (al_key_down(
-        estado_teclado,
-        ALLEGRO_KEY_D))
-    {
+    if (al_key_down(estado_teclado, ALLEGRO_KEY_D)) {
         movimento_x += 1;
     }
 
+    // Atualiza a posição X com base no movimento
+    jogador->x += movimento_x * jogador->velocidade;
 
-    /*
-        Normalizamos o movimento diagonal.
+    // Pulo
+    int espaco_pressionado = al_key_down(estado_teclado, ALLEGRO_KEY_SPACE);
 
-        Sem isso, o jogador seria mais rápido
-        quando W+A, W+D, S+A ou S+D fossem usados
-        ao mesmo tempo.
-    */
+    if (espaco_pressionado && !jogador->espaco_anterior && jogador->no_chao) {
+        jogador->velocidade_y = jogador->forca_pulo;
+        jogador->no_chao = 0;
+    }
+    jogador->espaco_anterior = espaco_pressionado;
 
-    if (movimento_x != 0 ||
-        movimento_y != 0)
-    {
-        float distancia = sqrt(
-            movimento_x * movimento_x +
-            movimento_y * movimento_y
-        );
+    // Aplica gravidade
+    jogador->velocidade_y += jogador->gravidade;
 
-        movimento_x /= distancia;
-        movimento_y /= distancia;
+    // Atualiza posição Y
+    jogador->y += jogador->velocidade_y;
 
-
-        jogador->x +=
-            movimento_x *
-            jogador->velocidade;
-
-        jogador->y +=
-            movimento_y *
-            jogador->velocidade;
+    // Chão da arena
+    float chao = ALTURA_TELA - jogador->tamanho;
+    if (jogador->y >= chao) {
+        jogador->y = chao;
+        jogador->velocidade_y = 0;
+        jogador->no_chao = 1;
+    }
+    else {
+        jogador->no_chao = 0;
     }
 
-
-    /*
-        Impede que o jogador saia da arena.
-    */
-
-    if (jogador->x < 0)
-    {
+    // Limites horizontais
+    if (jogador->x < 0) {
         jogador->x = 0;
     }
-
-    if (jogador->y < 0)
-    {
-        jogador->y = 0;
-    }
-
-    if (jogador->x + jogador->tamanho >
-        800)
-    {
-        jogador->x =
-            800 - jogador->tamanho;
-    }
-
-    if (jogador->y + jogador->tamanho >
-        600)
-    {
-        jogador->y =
-            600 - jogador->tamanho;
+    if (jogador->x + jogador->tamanho > LARGURA_TELA) {
+        jogador->x = LARGURA_TELA - jogador->tamanho;
     }
 }
 
-
-void jogador_desenhar(
-    Jogador* jogador
-)
+void jogador_desenhar(Jogador* jogador)
 {
-    // Por enquanto o jogador é representado
-    // por um quadrado branco.
-    // Mais tarde podemos substituir por uma imagem.
     al_draw_filled_rectangle(
         jogador->x,
         jogador->y,
@@ -141,86 +81,38 @@ void jogador_desenhar(
     );
 }
 
-
-void jogador_desenhar_arma(
-    Jogador* jogador,
-    float mouse_x,
-    float mouse_y
-)
+void jogador_desenhar_arma(Jogador* jogador, float mouse_x, float mouse_y)
 {
-    float centro_x =
-        jogador_centro_x(jogador);
+    float centro_x = jogador_centro_x(jogador);
+    float centro_y = jogador_centro_y(jogador);
 
-    float centro_y =
-        jogador_centro_y(jogador);
+    float direcao_x = mouse_x - centro_x;
+    float direcao_y = mouse_y - centro_y;
 
+    float distancia = sqrtf(direcao_x * direcao_x + direcao_y * direcao_y);
 
-    // Calcula a direção entre o jogador e o mouse
-    float direcao_x =
-        mouse_x - centro_x;
+    if (distancia < 0.001f) return;
 
-    float direcao_y =
-        mouse_y - centro_y;
-
-
-    // Calcula a distância até o mouse
-    float distancia = sqrt(
-        direcao_x * direcao_x +
-        direcao_y * direcao_y
-    );
-
-
-    // Evita divisão por zero
-    if (distancia == 0)
-    {
-        return;
-    }
-
-
-    // Normaliza a direção
     direcao_x /= distancia;
     direcao_y /= distancia;
 
+    float arma_x = centro_x + direcao_x * 35;
+    float arma_y = centro_y + direcao_y * 35;
 
-    /*
-        A arma começa no centro do jogador
-        e se estende 35 pixels na direção do mouse.
-    */
-
-    float arma_x =
-        centro_x +
-        direcao_x * 35;
-
-    float arma_y =
-        centro_y +
-        direcao_y * 35;
-
-
-    // Desenha a arma
     al_draw_line(
-        centro_x,
-        centro_y,
-        arma_x,
-        arma_y,
+        centro_x, centro_y,
+        arma_x, arma_y,
         al_map_rgb(150, 150, 150),
         8
     );
 }
 
-
-float jogador_centro_x(
-    Jogador* jogador
-)
+float jogador_centro_x(Jogador* jogador)
 {
-    return jogador->x +
-        jogador->tamanho / 2;
+    return jogador->x + jogador->tamanho / 2;
 }
 
-
-float jogador_centro_y(
-    Jogador* jogador
-)
+float jogador_centro_y(Jogador* jogador)
 {
-    return jogador->y +
-        jogador->tamanho / 2;
+    return jogador->y + jogador->tamanho / 2;
 }
