@@ -30,7 +30,8 @@ void pergunta_criar(Pergunta* p, const char* enunciado,
     const char* textos[], int qtd, int idx_correta,
     float largura_tela, float y, float altura);
 
-void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tela);
+// Adicionado o ALLEGRO_BITMAP* escudo no final:
+void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tela, ALLEGRO_BITMAP* escudo);
 
 // Retorna: 1 = acertou, 0 = errou, -1 = o tiro não atingiu nenhum botão
 int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th);
