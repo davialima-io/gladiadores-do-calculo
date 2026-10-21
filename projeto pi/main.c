@@ -94,6 +94,7 @@ int main(void)
     if (!fonte) {
         al_destroy_event_queue(fila_eventos);
         al_destroy_timer(timer);
+
         fundo_finalizar();
         al_destroy_display(tela);
         return 1;
@@ -124,13 +125,11 @@ int main(void)
 
     // Primeira equacao e suas alternativas
     equacao_gerar_nova(&equacao);
+
     pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
-
     int espera_proxima = 0; // frames de espera ate a proxima pergunta
-
-    // CHAMAR MENU
-    // O menu tem seu proprio loop interno.
-    // So retorna quando o jogador escolhe JOGAR ou SAIR.
+    // CHAMAR MENU O menu tem seu proprio loop interno.So retorna quando o jogador escolhe JOGAR ou SAIR.
+  
     int opcao = menu_executar(tela);
 
     if (opcao == MENU_SAIR) {
@@ -147,9 +146,7 @@ int main(void)
     ALLEGRO_KEYBOARD_STATE estado_teclado;
     float mouse_x = LARGURA_TELA / 2;
     float mouse_y = ALTURA_TELA / 2;
-
     bool executando = true;
-
     // O timer so comeca a contar agora, depois do menu
     al_start_timer(timer);
 
@@ -157,23 +154,19 @@ int main(void)
     while (executando) {
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_eventos, &evento);
-
         // Fechar janela
         if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             executando = false;
         }
-
         // Movimento do mouse
         if (evento.type == ALLEGRO_EVENT_MOUSE_AXES) {
             mouse_x = evento.mouse.x;
             mouse_y = evento.mouse.y;
         }
-
         // Clique do mouse (dispara tiro)
         if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
             mouse_x = evento.mouse.x;
             mouse_y = evento.mouse.y;
-
             if (evento.mouse.button == 1) {
                 tiro_disparar(
                     tiros,
@@ -184,18 +177,17 @@ int main(void)
                 );
             }
         }
-
         // ATUALIZACAO DO JOGO (60 FPS)
         if (evento.type == ALLEGRO_EVENT_TIMER) {
 
             al_get_keyboard_state(&estado_teclado);
+
             jogador_atualizar(&jogador, &estado_teclado);
 
             tiros_atualizar(tiros);
 
             // Atualiza o inimigo passando o chao correto
             inimigo_atualizar(&inimigo, LARGURA_TELA, ALTURA_TELA);
-
             // COLISOES: TIROS X INIMIGO
             for (int i = 0; i < MAX_TIROS; i++) {
                 if (!tiros[i].ativo) continue;
@@ -205,7 +197,6 @@ int main(void)
                     inimigo_receber_dano(&inimigo, 750, ALTURA_TELA);
                 }
             }
-
             // COLISOES: TIROS X ALTERNATIVAS DA EQUACAO
             for (int i = 0; i < MAX_TIROS; i++) {
                 if (!tiros[i].ativo) continue;
@@ -223,17 +214,14 @@ int main(void)
                     }
                 }
             }
-
             // Proxima pergunta depois do tempo de espera
             if (pergunta.respondida && --espera_proxima <= 0) {
                 equacao_gerar_nova(&equacao);
                 pergunta_de_equacao(&pergunta, &equacao, LARGURA_TELA, 80, 60);
             }
-
             // RENDERIZACAO
             fundo_atualizar();
             fundo_desenhar();
-
             equacao_desenhar(&equacao, fonte_equacao, LARGURA_TELA, ALTURA_TELA);
             pergunta_desenhar(&pergunta, fonte_equacao, LARGURA_TELA);
 
@@ -245,7 +233,6 @@ int main(void)
             al_flip_display();
         }
     }
-
     // FINALIZACAO
     al_destroy_font(fonte);
     al_destroy_font(fonte_equacao);
