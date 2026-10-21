@@ -16,17 +16,13 @@ void pergunta_criar(Pergunta* p, const char* enunciado,
     p->qtd = qtd;
     p->respondida = false;
 
-    float espaco = 20.0f; // espaço entre alternativas
+    float espaco = 20.0f;
 
-    // Aumentei o limite máximo de largura do botão de 150 para 220
-    // para os escudos ficarem maiores na tela
     float largura_botao = (largura_tela - (espaco * (qtd + 1))) / qtd;
     if (largura_botao > 220.0f) largura_botao = 220.0f;
 
     for (int i = 0; i < qtd; i++) {
         p->alt[i].x = espaco + (i * (largura_botao + espaco));
-
-        // Centraliza os botões na tela
         p->alt[i].x = (largura_tela - (qtd * largura_botao + (qtd - 1) * espaco)) / 2.0f + i * (largura_botao + espaco);
 
         p->alt[i].y = y;
@@ -54,7 +50,6 @@ void pergunta_de_equacao(Pergunta* p, const Equacao* eq,
             snprintf(textos[i], sizeof(textos[i]), "%d", resposta_certa);
         }
         else {
-            // Gera respostas erradas (variação de -5 a +5)
             int erro = (rand() % 11) - 5;
             if (erro == 0) erro = 1;
             int resposta_errada = resposta_certa + erro;
@@ -83,6 +78,10 @@ int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th)
             }
             else {
                 p->alt[i].estado = ALT_ERRADA;
+                // Marca a certa de verde também, para o jogador ver qual era a correta
+                for (int j = 0; j < p->qtd; j++) {
+                    if (p->alt[j].correta) p->alt[j].estado = ALT_CERTA;
+                }
                 return 0; // Errou
             }
         }
@@ -90,7 +89,7 @@ int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th)
     return -1;
 }
 
-// Desenha as alternativas (COM O ESCUDO PREENCHENDO O ESPAÇO)
+// Desenha as alternativas com o texto colorido
 void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tela, ALLEGRO_BITMAP* escudo) {
     if (p == NULL || fonte == NULL) return;
 
@@ -106,35 +105,40 @@ void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tel
         float w = p->alt[i].w;
         float h = p->alt[i].h;
 
-        // 1. Desenha o Escudo como fundo preenchendo 100% do botão
+        // 1. Desenha o Escudo (mantendo o branco original)
         if (escudo != NULL) {
             al_draw_scaled_bitmap(escudo,
-                0, 0, img_w, img_h, // Imagem original
-                cx, cy, w, h,       // Estica para preencher todo o botão (w e h)
+                0, 0, img_w, img_h,
+                cx, cy, w, h,
                 0
             );
         }
         else {
             // Fallback (caso a imagem não carregue)
-            ALLEGRO_COLOR cor = al_map_rgb(45, 45, 150); // Azul padrão
-            if (p->respondida) {
-                if (p->alt[i].correta) cor = al_map_rgb(0, 200, 0);
-                else if (p->alt[i].estado == ALT_ERRADA) cor = al_map_rgb(200, 0, 0);
-            }
-            al_draw_filled_rectangle(cx, cy, cx + w, cy + h, cor);
-            al_draw_rectangle(cx, cy, cx + w, cy + h, al_map_rgb(255, 255, 255), 2.0f);
+            al_draw_filled_rectangle(cx, cy, cx + w, cy + h, al_map_rgb(45, 45, 150));
         }
 
-        // 2. Desenha o Texto por cima do Escudo
-        int altura_fonte = al_get_font_line_height(fonte);
+        // 2. Define a cor do texto baseado no estado
+        ALLEGRO_COLOR cor_texto = al_map_rgb(255, 255, 255); // Branco padrão
 
-        // Centraliza o texto no meio do escudo
+        if (p->respondida) {
+            if (p->alt[i].estado == ALT_CERTA) {
+                cor_texto = al_map_rgb(50, 255, 50); // Verde neon
+            }
+            else if (p->alt[i].estado == ALT_ERRADA) {
+                cor_texto = al_map_rgb(255, 50, 50); // Vermelho vivo
+            }
+        }
+
+        // 3. Desenha o Texto por cima do Escudo
+        int altura_fonte = al_get_font_line_height(fonte);
         float texto_x = cx + (w / 2.0f);
         float texto_y = cy + (h / 2.0f) - (altura_fonte / 2.0f);
 
-        // Desenha uma sombrinha preta atrás do texto para dar contraste
+        // Sombra preta para dar contraste
         al_draw_text(fonte, al_map_rgb(0, 0, 0), texto_x + 2, texto_y + 2, ALLEGRO_ALIGN_CENTER, p->alt[i].texto);
-        // Desenha o texto principal
-        al_draw_text(fonte, al_map_rgb(255, 255, 255), texto_x, texto_y, ALLEGRO_ALIGN_CENTER, p->alt[i].texto);
+
+        // Número colorido (Verde, Vermelho ou Branco)
+        al_draw_text(fonte, cor_texto, texto_x, texto_y, ALLEGRO_ALIGN_CENTER, p->alt[i].texto);
     }
 }
