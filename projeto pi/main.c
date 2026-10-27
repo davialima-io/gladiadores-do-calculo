@@ -18,6 +18,15 @@
 #include "tempo.h"
 #include "alternativa.h"
 
+// Segundos ganhos por acerto. Diminui conforme o nivel sobe:
+// nivel 1 = 7s, nivel 2 = 6s, nivel 3 em diante = 5s (minimo 5s)
+static double bonus_tempo_por_nivel(int nivel)
+{
+    double bonus = 8.0 - nivel;
+    if (bonus < 5.0) bonus = 5.0;
+    return bonus;
+}
+
 int main(void)
 {
     // INICIALIZACAO DO ALLEGRO
@@ -136,6 +145,11 @@ int main(void)
     // Vidas do jogador (reiniciadas a cada partida)
     int vidas = VIDAS_INICIAIS;
 
+    // PROGRESSAO DE DIFICULDADE (reiniciada a cada partida)
+    int acertos = 0;      // total de acertos na partida
+    int nivel = 1;        // nivel atual (1..NIVEL_MAX)
+    int aviso_nivel = 0;  // frames restantes do aviso "NIVEL X!"
+
     // Frames de espera ate a proxima pergunta
     int espera_proxima = 0;
 
@@ -170,7 +184,12 @@ int main(void)
 
         vidas = VIDAS_INICIAIS;
 
-        equacao_gerar_nova(&equacao);
+        // Reinicia a progressao
+        acertos = 0;
+        nivel = 1;
+        aviso_nivel = 0;
+
+        equacao_gerar_nova(&equacao, nivel);
 
         // Y = 60 e altura = 140 para o escudo caber perfeitamente quadrado
         pergunta_de_equacao(
@@ -178,7 +197,8 @@ int main(void)
             &equacao,
             LARGURA_TELA,
             60,
-            140
+            140,
+            nivel
         );
 
         espera_proxima = 0;
@@ -309,8 +329,18 @@ int main(void)
 
                         if (r == 1)
                         {
-                            // ACERTO: ADICIONA 7 SEGUNDOS
-                            tempo_adicionar(&tempo, 7.0);
+                            // ACERTO: bonus depende do nivel da pergunta respondida
+                            tempo_adicionar(&tempo, bonus_tempo_por_nivel(nivel));
+
+                            // Conta o acerto e verifica se subiu de nivel
+                            acertos++;
+                            int novo_nivel = equacao_nivel_para_acertos(acertos);
+
+                            if (novo_nivel > nivel)
+                            {
+                                nivel = novo_nivel;
+                                aviso_nivel = 120; // 2 segundos de aviso
+                            }
                         }
                         else
                         {
@@ -335,17 +365,23 @@ int main(void)
 
                     if (espera_proxima == 0)
                     {
-                        equacao_gerar_nova(&equacao);
+                        equacao_gerar_nova(&equacao, nivel);
 
-                        // Altura mudada para 140 aqui também
                         pergunta_de_equacao(
                             &pergunta,
                             &equacao,
                             LARGURA_TELA,
                             60,
-                            140
+                            140,
+                            nivel
                         );
                     }
+                }
+
+                // Conta o tempo do aviso de nivel
+                if (aviso_nivel > 0)
+                {
+                    aviso_nivel--;
                 }
 
                 // RENDERIZACAO
@@ -379,6 +415,41 @@ int main(void)
                 inimigo_desenhar(&inimigo);
 
                 tempo_desenhar(&tempo, fonte);
+
+                // NIVEL ATUAL (abaixo do cronometro)
+                al_draw_textf(
+                    fonte,
+                    al_map_rgb(255, 255, 0),
+                    LARGURA_TELA - 10,
+                    24,
+                    ALLEGRO_ALIGN_RIGHT,
+                    "Nivel: %d",
+                    nivel
+                );
+
+                // AVISO DE SUBIDA DE NIVEL
+                if (aviso_nivel > 0)
+                {
+                    al_draw_textf(
+                        fonte_equacao,
+                        al_map_rgb(0, 0, 0),
+                        LARGURA_TELA / 2 + 2,
+                        302,
+                        ALLEGRO_ALIGN_CENTER,
+                        "NIVEL %d!",
+                        nivel
+                    );
+
+                    al_draw_textf(
+                        fonte_equacao,
+                        al_map_rgb(255, 215, 0),
+                        LARGURA_TELA / 2,
+                        300,
+                        ALLEGRO_ALIGN_CENTER,
+                        "NIVEL %d!",
+                        nivel
+                    );
+                }
 
                 // VIDAS (por ultimo, pra ficar por cima de tudo)
                 vidas_desenhar(vidas);

@@ -35,55 +35,93 @@ void pergunta_criar(Pergunta* p, const char* enunciado,
     }
 }
 
-// Monta as 4 alternativas a partir da equação
+// Distancia maxima entre a resposta errada e a certa, por nivel.
+// Nivel baixo: erradas bem longe (facil). Nivel alto: erradas coladas na certa.
+static int max_erro_por_nivel(int nivel)
+{
+    // Minimo 2: com +-1 so existem 2 valores possiveis e precisamos de 3 erradas
+    static const int tabela[NIVEL_MAX] = { 10, 8, 5, 3, 2, 2, 2, 2, 2, 2 };
+
+    if (nivel < 1) nivel = 1;
+    if (nivel > NIVEL_MAX) nivel = NIVEL_MAX;
+    return tabela[nivel - 1];
+}
+
+// Monta as 4 alternativas a partir da equacao
 void pergunta_de_equacao(Pergunta* p, const Equacao* eq,
-    float largura_tela, float y, float altura)
+    float largura_tela, float y, float altura, int nivel)
 {
     if (!p || !eq) return;
 
-    char textos[4][64];
-    int idx_correta = rand() % 4;
     int resposta_certa = eq->resposta_correta;
+    int idx_correta = rand() % 4;
+    int max_erro = max_erro_por_nivel(nivel);
+
+    int valores[4];
+    int usados[4];       // valores ja sorteados (para nao repetir)
+    int qtd_usados = 0;
+
+    usados[qtd_usados++] = resposta_certa;
+    valores[idx_correta] = resposta_certa;
 
     for (int i = 0; i < 4; i++) {
-        if (i == idx_correta) {
-            snprintf(textos[i], sizeof(textos[i]), "%d", resposta_certa);
-        }
-        else {
-            int erro = (rand() % 11) - 5;
-            if (erro == 0) erro = 1;
-            int resposta_errada = resposta_certa + erro;
-            if (resposta_errada < 0) resposta_errada = resposta_certa + 1;
-            snprintf(textos[i], sizeof(textos[i]), "%d", resposta_errada);
-        }
+        if (i == idx_correta) continue;
+
+        int candidata;
+        bool invalida;
+        int tentativas = 0;
+
+        do {
+            int erro = (rand() % (2 * max_erro + 1)) - max_erro;
+            candidata = resposta_certa + erro;
+
+            // invalida se for negativa ou igual a outra alternativa (inclui a certa)
+            invalida = (candidata < 0);
+            for (int k = 0; k < qtd_usados; k++) {
+                if (usados[k] == candidata) invalida = true;
+            }
+
+            // Se o intervalo for pequeno demais para achar valores diferentes
+            // (ex.: resposta certa = 0), aumenta o intervalo aos poucos.
+            tentativas++;
+            if (tentativas >= 30) {
+                max_erro++;
+                tentativas = 0;
+            }
+        } while (invalida);
+
+        usados[qtd_usados++] = candidata;
+        valores[i] = candidata;
+    }
+
+    char textos[4][64];
+    for (int i = 0; i < 4; i++) {
+        snprintf(textos[i], sizeof(textos[i]), "%d", valores[i]);
     }
 
     const char* ptrs[4] = { textos[0], textos[1], textos[2], textos[3] };
     pergunta_criar(p, eq->texto, ptrs, 4, idx_correta, largura_tela, y, altura);
 }
 
-// Testa colisão do tiro com as alternativas
+// Testa colisao do tiro com as alternativas
 int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th)
 {
     if (!p || p->respondida) return -1;
 
     for (int i = 0; i < p->qtd; i++) {
-        // AQUI ESTÁ A CORREÇÃO DA COLISÃO:
-        // Em vez de usar a caixa inteira (w e h), criamos uma caixa menor
-        // focada apenas no centro do escudo.
 
-        float margem_x = p->alt[i].w * 0.25f; // Corta 25% de cada lado
-        float margem_y = p->alt[i].h * 0.20f; // Corta 20% em cima e embaixo
+        float margem_x = p->alt[i].w * 0.25f;
+        float margem_y = p->alt[i].h * 0.20f;
 
         float hit_x = p->alt[i].x + margem_x;
         float hit_y = p->alt[i].y + margem_y;
         float hit_w = p->alt[i].w - (margem_x * 2);
         float hit_h = p->alt[i].h - (margem_y * 2);
 
-        // Testa se o tiro caiu dentro da área encolhida
+        // Testa se o tiro bateu no escudo
         if (tx >= hit_x && tx <= hit_x + hit_w &&
-            ty >= hit_y && ty <= hit_y + hit_h)
-        {
+            ty >= hit_y && ty <= hit_y + hit_h) {
+
             p->respondida = true;
             if (p->alt[i].correta) {
                 p->alt[i].estado = ALT_CERTA;
@@ -91,7 +129,7 @@ int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th)
             }
             else {
                 p->alt[i].estado = ALT_ERRADA;
-                // Marca a certa de verde também, para o jogador ver qual era a correta
+                // Marca a certa de verde tambem, para o jogador ver qual era a correta
                 for (int j = 0; j < p->qtd; j++) {
                     if (p->alt[j].correta) p->alt[j].estado = ALT_CERTA;
                 }
@@ -102,7 +140,7 @@ int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th)
     return -1;
 }
 
-// Desenha as alternativas com o texto colorido
+//Desenha as alternativas com o texto colorido
 void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tela, ALLEGRO_BITMAP* escudo) {
     if (p == NULL || fonte == NULL) return;
 
@@ -118,7 +156,7 @@ void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tel
         float w = p->alt[i].w;
         float h = p->alt[i].h;
 
-        // 1. Desenha o Escudo mantendo a proporção (sem achatar)
+        //Desenha o Escudo
         if (escudo != NULL) {
             float escala_w = w / img_w;
             float escala_h = h / img_h;
@@ -140,7 +178,7 @@ void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tel
             al_draw_filled_rectangle(cx, cy, cx + w, cy + h, al_map_rgb(45, 45, 150));
         }
 
-        // 2. Define a cor do texto
+        //Define a cor do texto
         ALLEGRO_COLOR cor_texto = al_map_rgb(255, 255, 255);
 
         if (p->respondida) {
@@ -152,7 +190,7 @@ void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tel
             }
         }
 
-        // 3. Desenha o Texto
+        //Desenha o Texto
         int altura_fonte = al_get_font_line_height(fonte);
         float texto_x = cx + (w / 2.0f);
         float texto_y = cy + (h / 2.0f) - (altura_fonte / 2.0f) + 10.0f;
