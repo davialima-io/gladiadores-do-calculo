@@ -19,7 +19,7 @@ void pergunta_criar(Pergunta* p, const char* enunciado,
     float espaco = 20.0f;
 
     float largura_botao = (largura_tela - (espaco * (qtd + 1))) / qtd;
-    if (largura_botao > 220.0f) largura_botao = 220.0f;
+    if (largura_botao > 140.0f) largura_botao = 140.0f;
 
     for (int i = 0; i < qtd; i++) {
         p->alt[i].x = espaco + (i * (largura_botao + espaco));
@@ -68,8 +68,21 @@ int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th)
     if (!p || p->respondida) return -1;
 
     for (int i = 0; i < p->qtd; i++) {
-        if (tx >= p->alt[i].x && tx <= p->alt[i].x + p->alt[i].w &&
-            ty >= p->alt[i].y && ty <= p->alt[i].y + p->alt[i].h)
+        // AQUI ESTÁ A CORREÇÃO DA COLISÃO:
+        // Em vez de usar a caixa inteira (w e h), criamos uma caixa menor
+        // focada apenas no centro do escudo.
+
+        float margem_x = p->alt[i].w * 0.25f; // Corta 25% de cada lado
+        float margem_y = p->alt[i].h * 0.20f; // Corta 20% em cima e embaixo
+
+        float hit_x = p->alt[i].x + margem_x;
+        float hit_y = p->alt[i].y + margem_y;
+        float hit_w = p->alt[i].w - (margem_x * 2);
+        float hit_h = p->alt[i].h - (margem_y * 2);
+
+        // Testa se o tiro caiu dentro da área encolhida
+        if (tx >= hit_x && tx <= hit_x + hit_w &&
+            ty >= hit_y && ty <= hit_y + hit_h)
         {
             p->respondida = true;
             if (p->alt[i].correta) {
@@ -105,40 +118,46 @@ void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tel
         float w = p->alt[i].w;
         float h = p->alt[i].h;
 
-        // 1. Desenha o Escudo (mantendo o branco original)
+        // 1. Desenha o Escudo mantendo a proporção (sem achatar)
         if (escudo != NULL) {
+            float escala_w = w / img_w;
+            float escala_h = h / img_h;
+            float escala = (escala_w < escala_h) ? escala_w : escala_h;
+
+            float draw_w = img_w * escala;
+            float draw_h = img_h * escala;
+
+            float draw_x = cx + (w - draw_w) / 2.0f;
+            float draw_y = cy + (h - draw_h) / 2.0f;
+
             al_draw_scaled_bitmap(escudo,
                 0, 0, img_w, img_h,
-                cx, cy, w, h,
+                draw_x, draw_y, draw_w, draw_h,
                 0
             );
         }
         else {
-            // Fallback (caso a imagem não carregue)
             al_draw_filled_rectangle(cx, cy, cx + w, cy + h, al_map_rgb(45, 45, 150));
         }
 
-        // 2. Define a cor do texto baseado no estado
-        ALLEGRO_COLOR cor_texto = al_map_rgb(255, 255, 255); // Branco padrão
+        // 2. Define a cor do texto
+        ALLEGRO_COLOR cor_texto = al_map_rgb(255, 255, 255);
 
         if (p->respondida) {
             if (p->alt[i].estado == ALT_CERTA) {
-                cor_texto = al_map_rgb(50, 255, 50); // Verde neon
+                cor_texto = al_map_rgb(50, 255, 50); // Verde
             }
             else if (p->alt[i].estado == ALT_ERRADA) {
-                cor_texto = al_map_rgb(255, 50, 50); // Vermelho vivo
+                cor_texto = al_map_rgb(255, 50, 50); // Vermelho
             }
         }
 
-        // 3. Desenha o Texto por cima do Escudo
+        // 3. Desenha o Texto
         int altura_fonte = al_get_font_line_height(fonte);
         float texto_x = cx + (w / 2.0f);
-        float texto_y = cy + (h / 2.0f) - (altura_fonte / 2.0f);
+        float texto_y = cy + (h / 2.0f) - (altura_fonte / 2.0f) + 10.0f;
 
-        // Sombra preta para dar contraste
         al_draw_text(fonte, al_map_rgb(0, 0, 0), texto_x + 2, texto_y + 2, ALLEGRO_ALIGN_CENTER, p->alt[i].texto);
-
-        // Número colorido (Verde, Vermelho ou Branco)
         al_draw_text(fonte, cor_texto, texto_x, texto_y, ALLEGRO_ALIGN_CENTER, p->alt[i].texto);
     }
 }
