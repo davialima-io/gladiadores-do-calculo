@@ -172,13 +172,13 @@ int main(void)
 
         equacao_gerar_nova(&equacao);
 
-        // Y = 60 e altura = 100 para aumentar o escudo
+        // Y = 60 e altura = 140 para o escudo caber perfeitamente quadrado
         pergunta_de_equacao(
             &pergunta,
             &equacao,
             LARGURA_TELA,
             60,
-            100
+            140
         );
 
         espera_proxima = 0;
@@ -337,12 +337,13 @@ int main(void)
                     {
                         equacao_gerar_nova(&equacao);
 
+                        // Altura mudada para 140 aqui também
                         pergunta_de_equacao(
                             &pergunta,
                             &equacao,
                             LARGURA_TELA,
                             60,
-                            100
+                            140
                         );
                     }
                 }
