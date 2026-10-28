@@ -2,11 +2,12 @@
 #ifndef JOGADOR_H
 #define JOGADOR_H
 
+#include <stdbool.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
+#include "inimigo.h"
 
-
-// Struct pro jogador
+// Struct do jogador
 typedef struct
 {
     float x, y;
@@ -41,5 +42,11 @@ void jogador_desenhar_arma(
 
 float jogador_centro_x(Jogador* jogador);
 float jogador_centro_y(Jogador* jogador);
+
+// Verifica colisão entre jogador e inimigo
+bool jogador_colidiu_com_inimigo(
+    Jogador* jogador,
+    Inimigo* inimigo
+);
 
 #endif

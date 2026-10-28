@@ -135,6 +135,8 @@ int main(void)
 
     // Vidas do jogador (reiniciadas a cada partida)
     int vidas = VIDAS_INICIAIS;
+    // Controla o intervalo entre danos do inimigo
+    double ultimo_dano_inimigo = al_get_time() - 1.0;
 
     // Frames de espera ate a proxima pergunta
     int espera_proxima = 0;
@@ -169,6 +171,8 @@ int main(void)
         );
 
         vidas = VIDAS_INICIAIS;
+        // Controla o intervalo entre danos do inimigo
+        double ultimo_dano_inimigo = al_get_time() - 1.0;
 
         equacao_gerar_nova(&equacao);
 
@@ -261,6 +265,27 @@ int main(void)
                     LARGURA_TELA,
                     ALTURA_TELA
                 );
+                // DANO POR COLISAO: JOGADOR X INIMIGO
+                double agora = al_get_time();
+
+                if (agora - ultimo_dano_inimigo >= 1.0)
+                {
+                    if (jogador_colidiu_com_inimigo(
+                        &jogador,
+                        &inimigo
+                    ))
+                    {
+                        vidas--;
+
+                        ultimo_dano_inimigo = agora;
+
+                        // Evita que as vidas fiquem negativas
+                        if (vidas < 0)
+                        {
+                            vidas = 0;
+                        }
+                    }
+                }
 
                 // COLISOES: TIROS X INIMIGO
                 for (int i = 0; i < MAX_TIROS; i++)
