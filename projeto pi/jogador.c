@@ -1,4 +1,6 @@
+
 #include "jogador.h"
+#include "inimigo.h"
 #include <math.h>
 
 #define LARGURA_TELA 800
@@ -18,9 +20,15 @@ void jogador_inicializar(Jogador* jogador)
 
     jogador->no_chao = 0;
     jogador->espaco_anterior = 0;
+
+    // VIDAS INICIAIS
+    jogador->vidas = 3;
 }
 
-void jogador_atualizar(Jogador* jogador, ALLEGRO_KEYBOARD_STATE* estado_teclado)
+void jogador_atualizar(
+    Jogador* jogador,
+    ALLEGRO_KEYBOARD_STATE* estado_teclado
+)
 {
     float movimento_x = 0;
 
@@ -28,30 +36,36 @@ void jogador_atualizar(Jogador* jogador, ALLEGRO_KEYBOARD_STATE* estado_teclado)
     if (al_key_down(estado_teclado, ALLEGRO_KEY_A)) {
         movimento_x -= 1;
     }
+
     if (al_key_down(estado_teclado, ALLEGRO_KEY_D)) {
         movimento_x += 1;
     }
 
-    // Atualiza a posição X com base no movimento
     jogador->x += movimento_x * jogador->velocidade;
 
     // Pulo
-    int espaco_pressionado = al_key_down(estado_teclado, ALLEGRO_KEY_SPACE);
+    int espaco_pressionado =
+        al_key_down(estado_teclado, ALLEGRO_KEY_SPACE);
 
-    if (espaco_pressionado && !jogador->espaco_anterior && jogador->no_chao) {
+    if (espaco_pressionado &&
+        !jogador->espaco_anterior &&
+        jogador->no_chao)
+    {
         jogador->velocidade_y = jogador->forca_pulo;
         jogador->no_chao = 0;
     }
+
     jogador->espaco_anterior = espaco_pressionado;
 
-    // Aplica gravidade
+    // Gravidade
     jogador->velocidade_y += jogador->gravidade;
 
     // Atualiza posição Y
     jogador->y += jogador->velocidade_y;
 
-    // Chão da arena
+    // Chão
     float chao = ALTURA_TELA - jogador->tamanho;
+
     if (jogador->y >= chao) {
         jogador->y = chao;
         jogador->velocidade_y = 0;
@@ -65,6 +79,7 @@ void jogador_atualizar(Jogador* jogador, ALLEGRO_KEYBOARD_STATE* estado_teclado)
     if (jogador->x < 0) {
         jogador->x = 0;
     }
+
     if (jogador->x + jogador->tamanho > LARGURA_TELA) {
         jogador->x = LARGURA_TELA - jogador->tamanho;
     }
@@ -81,7 +96,11 @@ void jogador_desenhar(Jogador* jogador)
     );
 }
 
-void jogador_desenhar_arma(Jogador* jogador, float mouse_x, float mouse_y)
+void jogador_desenhar_arma(
+    Jogador* jogador,
+    float mouse_x,
+    float mouse_y
+)
 {
     float centro_x = jogador_centro_x(jogador);
     float centro_y = jogador_centro_y(jogador);
@@ -89,7 +108,10 @@ void jogador_desenhar_arma(Jogador* jogador, float mouse_x, float mouse_y)
     float direcao_x = mouse_x - centro_x;
     float direcao_y = mouse_y - centro_y;
 
-    float distancia = sqrtf(direcao_x * direcao_x + direcao_y * direcao_y);
+    float distancia = sqrtf(
+        direcao_x * direcao_x +
+        direcao_y * direcao_y
+    );
 
     if (distancia < 0.001f) return;
 
@@ -115,4 +137,18 @@ float jogador_centro_x(Jogador* jogador)
 float jogador_centro_y(Jogador* jogador)
 {
     return jogador->y + jogador->tamanho / 2;
+}
+
+// DETECTA COLISÃO ENTRE JOGADOR E INIMIGO
+bool jogador_colidiu_com_inimigo(
+    Jogador* jogador,
+    Inimigo* inimigo
+)
+{
+    return (
+        jogador->x < inimigo->x + inimigo->tamanho &&
+        jogador->x + jogador->tamanho > inimigo->x &&
+        jogador->y < inimigo->y + inimigo->tamanho &&
+        jogador->y + jogador->tamanho > inimigo->y
+        );
 }
