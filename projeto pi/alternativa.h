@@ -25,19 +25,18 @@ typedef struct {
     bool respondida;
 } Pergunta;
 
-// idx_correta = índice (0..qtd-1) da alternativa certa
 void pergunta_criar(Pergunta* p, const char* enunciado,
     const char* textos[], int qtd, int idx_correta,
     float largura_tela, float y, float altura);
 
-// Adicionado o ALLEGRO_BITMAP* escudo no final:
 void pergunta_desenhar(const Pergunta* p, ALLEGRO_FONT* fonte, float largura_tela, ALLEGRO_BITMAP* escudo);
 
-// Retorna: 1 = acertou, 0 = errou, -1 = o tiro não atingiu nenhum botão
+// Retorna: 1 = acertou, 0 = errou, -1 = o tiro nao atingiu nenhum botao
 int pergunta_testar_tiro(Pergunta* p, float tx, float ty, float tw, float th);
 
-// Monta as 4 alternativas a partir da equação (1 certa + 3 erradas, embaralhadas)
+// Monta as 4 alternativas a partir da equacao.
+// Quanto maior o nivel, mais perto da resposta certa ficam as erradas.
 void pergunta_de_equacao(Pergunta* p, const Equacao* eq,
-    float largura_tela, float y, float altura);
+    float largura_tela, float y, float altura, int nivel);
 
 #endif
