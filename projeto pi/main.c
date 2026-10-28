@@ -17,6 +17,7 @@
 #include "equacao.h"
 #include "tempo.h"
 #include "alternativa.h"
+#include "tela.h"
 
 // Segundos ganhos por acerto. Diminui conforme o nivel sobe:
 // nivel 1 = 7s, nivel 2 = 6s, nivel 3 em diante = 5s (minimo 5s)
@@ -239,6 +240,7 @@ int main(void)
             {
                 mouse_x = evento.mouse.x;
                 mouse_y = evento.mouse.y;
+                tela_mouse_para_jogo(tela, &mouse_x, &mouse_y);
             }
 
             // CLIQUE DO MOUSE
@@ -246,6 +248,8 @@ int main(void)
             {
                 mouse_x = evento.mouse.x;
                 mouse_y = evento.mouse.y;
+                tela_mouse_para_jogo(tela, &mouse_x, &mouse_y);
+
 
                 if (evento.mouse.button == 1)
                 {
@@ -257,6 +261,12 @@ int main(void)
                         mouse_y
                     );
                 }
+            }
+            // TELA CHEIA (F11)
+            if (evento.type == ALLEGRO_EVENT_KEY_DOWN &&
+                evento.keyboard.keycode == ALLEGRO_KEY_F11)
+            {
+                tela_alternar_tela_cheia(tela);
             }
 
             // ATUALIZACAO DO JOGO (60 FPS)
@@ -410,6 +420,7 @@ int main(void)
                 }
 
                 // RENDERIZACAO
+                tela_preparar_frame(tela);
                 fundo_atualizar();
                 fundo_desenhar();
 

@@ -1,4 +1,6 @@
 #include "menu.h"
+#include "tela.h"
+#include "jogo.h"
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -108,8 +110,8 @@ int menu_executar(ALLEGRO_DISPLAY* display)
         }
 
         /* TECLADO */
-        if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
-        {
+        if (ev.type == ALLEGRO_EVENT_KEY_DOWN){
+
             int tecla = ev.keyboard.keycode;
 
             if (tecla == ALLEGRO_KEY_UP ||
@@ -121,6 +123,9 @@ int menu_executar(ALLEGRO_DISPLAY* display)
                 {
                     selecionado = NUM_BOTOES - 1;
                 }
+            }
+            else if (tecla == ALLEGRO_KEY_F11){
+                tela_alternar_tela_cheia(display);
             }
             else if (tecla == ALLEGRO_KEY_DOWN ||
                 tecla == ALLEGRO_KEY_S)
@@ -160,34 +165,27 @@ int menu_executar(ALLEGRO_DISPLAY* display)
         /* DESENHO DO MENU */
         if (ev.type == ALLEGRO_EVENT_TIMER)
         {
-            int largura_janela =
-                al_get_display_width(display);
-
-            int altura_janela =
-                al_get_display_height(display);
+            tela_preparar_frame(display);
 
             if (fundo)
             {
-                int img_w = al_get_bitmap_width(fundo);
-                int img_h = al_get_bitmap_height(fundo);
-
                 al_draw_scaled_bitmap(
                     fundo,
                     0, 0,
-                    img_w, img_h,
+                    al_get_bitmap_width(fundo),
+                    al_get_bitmap_height(fundo),
                     0, 0,
-                    largura_janela,
-                    altura_janela,
+                    LARGURA_TELA,
+                    ALTURA_TELA,
                     0
                 );
             }
             else
             {
-                al_clear_to_color(
-                    al_map_rgb(40, 20, 15)
-                );
+                al_clear_to_color(al_map_rgb(40, 20, 15));
             }
 
+            //Botão
             for (int i = 0; i < NUM_BOTOES; i++)
             {
                 ALLEGRO_COLOR cor =
