@@ -87,13 +87,8 @@ void jogador_atualizar(
 
 void jogador_desenhar(Jogador* jogador)
 {
-    al_draw_filled_rectangle(
-        jogador->x,
-        jogador->y,
-        jogador->x + jogador->tamanho,
-        jogador->y + jogador->tamanho,
-        al_map_rgb(255, 255, 255)
-    );
+    al_draw_filled_rectangle(jogador->x,jogador->y, jogador->x + jogador->tamanho, jogador->y + jogador->tamanho,  al_map_rgb(255, 255, 255));
+        
 }
 
 void jogador_desenhar_arma(
@@ -104,29 +99,18 @@ void jogador_desenhar_arma(
 {
     float centro_x = jogador_centro_x(jogador);
     float centro_y = jogador_centro_y(jogador);
-
     float direcao_x = mouse_x - centro_x;
     float direcao_y = mouse_y - centro_y;
-
     float distancia = sqrtf(
-        direcao_x * direcao_x +
-        direcao_y * direcao_y
+    direcao_x * direcao_x +
+    direcao_y * direcao_y
     );
-
     if (distancia < 0.001f) return;
-
     direcao_x /= distancia;
     direcao_y /= distancia;
-
     float arma_x = centro_x + direcao_x * 35;
     float arma_y = centro_y + direcao_y * 35;
-
-    al_draw_line(
-        centro_x, centro_y,
-        arma_x, arma_y,
-        al_map_rgb(150, 150, 150),
-        8
-    );
+    al_draw_line(centro_x, centro_y,arma_x, arma_y,  al_map_rgb(150, 150, 150), 8);
 }
 
 float jogador_centro_x(Jogador* jogador)
@@ -139,16 +123,18 @@ float jogador_centro_y(Jogador* jogador)
     return jogador->y + jogador->tamanho / 2;
 }
 
-// DETECTA COLISÃO ENTRE JOGADOR E INIMIGO
-bool jogador_colidiu_com_inimigo(
-    Jogador* jogador,
-    Inimigo* inimigo
+// COLISÃO ENTRE JOGADOR E INIMIGO
+bool jogador_colidiu_com_inimigo( Jogador* jogador,Inimigo* inimigo
 )
 {
     return (
+        // colisao pela esquerda
         jogador->x < inimigo->x + inimigo->tamanho &&
+        // colisao pela direita 
         jogador->x + jogador->tamanho > inimigo->x &&
+        //colisao pir cima 
         jogador->y < inimigo->y + inimigo->tamanho &&
+        //colisao por baixo
         jogador->y + jogador->tamanho > inimigo->y
         );
 }

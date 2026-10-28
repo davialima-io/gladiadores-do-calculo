@@ -20,7 +20,6 @@ void inimigo_inicializar(Inimigo* inimigo, float x, float y)
     // FORÇA DIRETAMENTE PARA TESTAR:
     inimigo->vida_maxima = 10;
     inimigo->vida = 10;
-
     inimigo->tempo_pulo = 0;
 }
 
@@ -37,23 +36,21 @@ void inimigo_atualizar(Inimigo* inimigo, float largura_tela, float altura_chao)
         inimigo->x = 0;
         inimigo->direcao = 1;
     }
-
     // 2. Lógica de pulo aleatório
     inimigo->tempo_pulo++;
     if (inimigo->tempo_pulo >= 100) {
         inimigo->tempo_pulo = 0;
-
         if (inimigo->no_chao && (rand() % 2 == 0)) {
             inimigo->velocidade_y = inimigo->forca_pulo;
             inimigo->no_chao = 0;
         }
     }
-
     // 3. Aplica gravidade e movimento vertical (eixo Y)
+
     inimigo->velocidade_y += inimigo->gravidade;
     inimigo->y += inimigo->velocidade_y;
 
-    // 4. Colisão com o chão alinhada perfeitamente com a plataforma
+    // 4. Colisão com o chão alinhada com a plataforma
     float chao_jogador = (ALTURA_TELA - 65) - inimigo->tamanho;
 
     if (inimigo->y >= chao_jogador) {
@@ -73,7 +70,7 @@ void inimigo_receber_dano(Inimigo* inimigo, float x_inicial, float altura_chao)
     if (inimigo->vida <= 0)
     {
         inimigo->x = 750;
-        // Respawna na altura correta em cima da plataforma
+        // Respawna em cima da plataforma
         inimigo->y = (ALTURA_TELA - 100) - inimigo->tamanho;
         inimigo->vida = inimigo->vida_maxima;
         inimigo->velocidade_y = 0;
@@ -84,10 +81,7 @@ void inimigo_receber_dano(Inimigo* inimigo, float x_inicial, float altura_chao)
 
 bool inimigo_colidiu_com_tiro(Inimigo* inimigo, float tiro_x, float tiro_y)
 {
-    if (tiro_x >= inimigo->x &&
-        tiro_x <= inimigo->x + inimigo->tamanho &&
-        tiro_y >= inimigo->y &&
-        tiro_y <= inimigo->y + inimigo->tamanho)
+    if (tiro_x >= inimigo->x && tiro_x <= inimigo->x + inimigo->tamanho &&  tiro_y >= inimigo->y && tiro_y <= inimigo->y + inimigo->tamanho)
     {
         return true;
     }

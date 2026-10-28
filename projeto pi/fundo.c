@@ -96,17 +96,12 @@ void fundo_atualizar()
     /* Monta o nome do arquivo */
     char nome_arquivo[100];
 
-    sprintf_s(
-        nome_arquivo,
-        sizeof(nome_arquivo),
-        "fundo_frames/frame_%04d.jpg",
-        numero_frame + 1
-    );
-
+    sprintf_s(nome_arquivo, sizeof(nome_arquivo), "fundo_frames/frame_%04d.jpg",numero_frame + 1 );
+     
     /* Carrega o próximo frame */
     ALLEGRO_BITMAP* novo_frame = al_load_bitmap(nome_arquivo);
 
-    /* Só substitui o frame atual se a imagem foi carregada */
+    // Só substitui o frame atual se a imagem foi carregada 
     if (novo_frame)
     {
         /* Libera a imagem anterior */
