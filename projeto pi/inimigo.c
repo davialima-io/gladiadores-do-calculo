@@ -63,9 +63,12 @@ void inimigo_atualizar(Inimigo* inimigo) {
     }
 }
 
-void inimigo_receber_dano(Inimigo* inimigo) {
+bool inimigo_receber_dano(Inimigo* inimigo) {
     inimigo->vida--;
-    if (inimigo->vida <= 0) voltar_ao_ponto_inicial(inimigo);
+    if (inimigo->vida > 0) return false;
+
+    voltar_ao_ponto_inicial(inimigo);
+    return true;
 }
 
 bool inimigo_colidiu_com_tiro(const Inimigo* inimigo, float tiro_x, float tiro_y) {

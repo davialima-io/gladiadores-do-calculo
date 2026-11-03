@@ -5,7 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <stdbool.h>
 
-#define VIDA_MAXIMA_INIMIGO 10
+#define VIDA_MAXIMA_INIMIGO 17
 
 typedef struct {
     float x;
@@ -27,8 +27,8 @@ typedef struct {
 void inimigo_inicializar(Inimigo* inimigo);
 void inimigo_atualizar(Inimigo* inimigo);
 
-// Tira uma vida. Quando zera, o inimigo volta pro ponto inicial com a vida cheia.
-void inimigo_receber_dano(Inimigo* inimigo);
+// Tira uma vida. Quando zera, o inimigo volta pro ponto inicial com a vida cheia e retorna true.
+bool inimigo_receber_dano(Inimigo* inimigo);
 
 bool inimigo_colidiu_com_tiro(const Inimigo* inimigo, float tiro_x, float tiro_y);
 void inimigo_desenhar(const Inimigo* inimigo);
