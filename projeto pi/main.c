@@ -21,8 +21,6 @@
 #include "tela.h"
 
 #define FPS 60
-#define INIMIGO_X 750
-#define INIMIGO_Y (ALTURA_TELA - 50)
 #define ALTERNATIVAS_Y 60
 #define ALTERNATIVAS_ALTURA 140   // escudo fica quadrado com 140
 #define FRAMES_ENTRE_PERGUNTAS 120
@@ -114,7 +112,7 @@ static void nova_pergunta(Partida* p) {
 static void iniciar_partida(Partida* p) {
     jogador_inicializar(&p->jogador);
     tiros_inicializar(p->tiros);
-    inimigo_inicializar(&p->inimigo, INIMIGO_X, INIMIGO_Y);
+    inimigo_inicializar(&p->inimigo);
     tempo_inicializar(&p->tempo);
 
     p->vidas = VIDAS_INICIAIS;
@@ -140,7 +138,7 @@ static void tratar_tiros_no_inimigo(Partida* p) {
         if (!p->tiros[i].ativo) continue;
         if (inimigo_colidiu_com_tiro(&p->inimigo, p->tiros[i].x, p->tiros[i].y)) {
             p->tiros[i].ativo = false;
-            inimigo_receber_dano(&p->inimigo, INIMIGO_X, ALTURA_TELA);
+            inimigo_receber_dano(&p->inimigo);
         }
     }
 }
@@ -190,7 +188,7 @@ static bool atualizar_partida(Partida* p) {
     al_get_keyboard_state(&teclado);
     jogador_atualizar(&p->jogador, &teclado);
     tiros_atualizar(p->tiros);
-    inimigo_atualizar(&p->inimigo, LARGURA_TELA, ALTURA_TELA);
+    inimigo_atualizar(&p->inimigo);
 
     tratar_dano_do_inimigo(p);
     tratar_tiros_no_inimigo(p);

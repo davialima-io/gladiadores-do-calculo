@@ -1,114 +1,87 @@
 #include "inimigo.h"
 #include "jogo.h"
 #include <stdlib.h>
-#define VIDA_MAXIMA_INIMIGO 3
 
-void inimigo_inicializar(Inimigo* inimigo, float x, float y)
-{
-    inimigo->tamanho = 50;
-    inimigo->x = x;
-    inimigo->y = (ALTURA_TELA - 100) - inimigo->tamanho;
+#define INIMIGO_TAMANHO 50
+#define INIMIGO_X_INICIAL 750
+#define INIMIGO_Y_INICIAL (ALTURA_TELA - 100 - INIMIGO_TAMANHO)
+#define FRAMES_ENTRE_PULOS 100
 
-    inimigo->velocidade = 3.5f;
-    inimigo->direcao = -1;
-
+// Coloca o inimigo no canto direito com a vida cheia (usado no inicio e quando ele morre)
+static void voltar_ao_ponto_inicial(Inimigo* inimigo) {
+    inimigo->x = INIMIGO_X_INICIAL;
+    inimigo->y = INIMIGO_Y_INICIAL;
     inimigo->velocidade_y = 0;
-    inimigo->gravidade = 0.5f;
-    inimigo->forca_pulo = -10.0f;
-    inimigo->no_chao = 1;
-
-    // FORÇA DIRETAMENTE PARA TESTAR:
-    inimigo->vida_maxima = 10;
-    inimigo->vida = 10;
-    inimigo->tempo_pulo = 0;
+    inimigo->no_chao = true;
+    inimigo->direcao = -1;
+    inimigo->vida = inimigo->vida_maxima;
 }
 
-void inimigo_atualizar(Inimigo* inimigo, float largura_tela, float altura_chao)
-{
-    // 1. Movimento horizontal (eixo X)
-    inimigo->x += inimigo->velocidade * inimigo->direcao;
+void inimigo_inicializar(Inimigo* inimigo) {
+    inimigo->tamanho = INIMIGO_TAMANHO;
+    inimigo->velocidade = 3.5f;
+    inimigo->gravidade = 0.5f;
+    inimigo->forca_pulo = -10.0f;
+    inimigo->tempo_pulo = 0;
+    inimigo->vida_maxima = VIDA_MAXIMA_INIMIGO;
+    voltar_ao_ponto_inicial(inimigo);
+}
 
-    if (inimigo->x + inimigo->tamanho >= largura_tela) {
-        inimigo->x = largura_tela - inimigo->tamanho;
+void inimigo_atualizar(Inimigo* inimigo) {
+    // anda pro lado e inverte a direcao quando bate na parede
+    inimigo->x += inimigo->velocidade * inimigo->direcao;
+    if (inimigo->x + inimigo->tamanho >= LARGURA_TELA) {
+        inimigo->x = LARGURA_TELA - inimigo->tamanho;
         inimigo->direcao = -1;
     }
     if (inimigo->x <= 0) {
         inimigo->x = 0;
         inimigo->direcao = 1;
     }
-    // 2. Lógica de pulo aleatório
+
+    // de tempos em tempos sorteia se vai pular (50% de chance)
     inimigo->tempo_pulo++;
-    if (inimigo->tempo_pulo >= 100) {
+    if (inimigo->tempo_pulo >= FRAMES_ENTRE_PULOS) {
         inimigo->tempo_pulo = 0;
-        if (inimigo->no_chao && (rand() % 2 == 0)) {
+        if (inimigo->no_chao && rand() % 2 == 0) {
             inimigo->velocidade_y = inimigo->forca_pulo;
-            inimigo->no_chao = 0;
+            inimigo->no_chao = false;
         }
     }
-    // 3. Aplica gravidade e movimento vertical (eixo Y)
 
     inimigo->velocidade_y += inimigo->gravidade;
     inimigo->y += inimigo->velocidade_y;
 
-    // 4. Colisão com o chão alinhada com a plataforma
-    float chao_jogador = (ALTURA_TELA - 65) - inimigo->tamanho;
-
-    if (inimigo->y >= chao_jogador) {
-        inimigo->y = chao_jogador;
+    float chao = CHAO_Y - inimigo->tamanho;
+    if (inimigo->y >= chao) {
+        inimigo->y = chao;
         inimigo->velocidade_y = 0;
-        inimigo->no_chao = 1;
+        inimigo->no_chao = true;
     }
     else {
-        inimigo->no_chao = 0;
+        inimigo->no_chao = false;
     }
 }
 
-void inimigo_receber_dano(Inimigo* inimigo, float x_inicial, float altura_chao)
-{
+void inimigo_receber_dano(Inimigo* inimigo) {
     inimigo->vida--;
-
-    if (inimigo->vida <= 0)
-    {
-        inimigo->x = 750;
-        // Respawna em cima da plataforma
-        inimigo->y = (ALTURA_TELA - 100) - inimigo->tamanho;
-        inimigo->vida = inimigo->vida_maxima;
-        inimigo->velocidade_y = 0;
-        inimigo->no_chao = 1;
-        inimigo->direcao = -1;
-    }
+    if (inimigo->vida <= 0) voltar_ao_ponto_inicial(inimigo);
 }
 
-bool inimigo_colidiu_com_tiro(Inimigo* inimigo, float tiro_x, float tiro_y)
-{
-    if (tiro_x >= inimigo->x && tiro_x <= inimigo->x + inimigo->tamanho &&  tiro_y >= inimigo->y && tiro_y <= inimigo->y + inimigo->tamanho)
-    {
-        return true;
-    }
-    return false;
+bool inimigo_colidiu_com_tiro(const Inimigo* inimigo, float tiro_x, float tiro_y) {
+    return tiro_x >= inimigo->x && tiro_x <= inimigo->x + inimigo->tamanho && tiro_y >= inimigo->y && tiro_y <= inimigo->y + inimigo->tamanho;
 }
 
-void inimigo_desenhar(Inimigo* inimigo)
-{
-    if (inimigo->vida <= 0) return;
+void inimigo_desenhar(const Inimigo* inimigo) {
+    al_draw_filled_rectangle(inimigo->x, inimigo->y, inimigo->x + inimigo->tamanho, inimigo->y + inimigo->tamanho, al_map_rgb(200, 50, 50));
 
-    // Desenha o inimigo
-    al_draw_filled_rectangle(
-        inimigo->x,
-        inimigo->y,
-        inimigo->x + inimigo->tamanho,
-        inimigo->y + inimigo->tamanho,
-        al_map_rgb(200, 50, 50)
-    );
-
-    // Barra de vida
+    // barra de vida em cima da cabeca, a verde encolhe conforme ele apanha
     float largura_barra = 60;
     float altura_barra = 8;
     float barra_x = inimigo->x - 5;
     float barra_y = inimigo->y - 15;
+    float largura_vida = largura_barra * ((float)inimigo->vida / inimigo->vida_maxima);
 
     al_draw_filled_rectangle(barra_x, barra_y, barra_x + largura_barra, barra_y + altura_barra, al_map_rgb(50, 50, 50));
-
-    float largura_vida = largura_barra * ((float)inimigo->vida / inimigo->vida_maxima);
     al_draw_filled_rectangle(barra_x, barra_y, barra_x + largura_vida, barra_y + altura_barra, al_map_rgb(50, 220, 70));
 }

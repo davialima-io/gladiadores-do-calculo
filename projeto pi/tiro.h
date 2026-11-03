@@ -1,55 +1,26 @@
-#pragma once
 #ifndef TIRO_H
 #define TIRO_H
 
-#define MAX_TIROS 50
-#define VIDA_MAXIMA_INIMIGO 3
-
 #include <stdbool.h>
 
+#define MAX_TIROS 50
 
-// Representa um projétil disparado pelo jogador
-typedef struct
-{
+// Projetil disparado pelo jogador
+typedef struct {
     float x;
     float y;
-
     float velocidade;
-
-    float direcao_x;
+    float direcao_x;   // direcao ja normalizada (tamanho 1)
     float direcao_y;
-
     bool ativo;
-
 } Tiro;
 
+void tiros_inicializar(Tiro tiros[]);
 
-// Inicializa todos os tiros
-void tiros_inicializar(
-    Tiro tiros[]
-);
+// Cria um tiro saindo do jogador em direcao ao mouse. Se nao tiver vaga no vetor, ignora o clique.
+void tiro_disparar(Tiro tiros[], float jogador_x, float jogador_y, float mouse_x, float mouse_y);
 
-
-// Cria um novo tiro na direção do mouse
-void tiro_disparar(
-    Tiro tiros[],
-    float jogador_x,
-    float jogador_y,
-    float mouse_x,
-    float mouse_y
-);
-
-
-// Atualiza a posição dos tiros
-void tiros_atualizar(
-    Tiro tiros[]
-);
-
-
-// Desenha os tiros ativos
-void tiros_desenhar(
-    Tiro tiros[]
-);
-
+void tiros_atualizar(Tiro tiros[]);
+void tiros_desenhar(Tiro tiros[]);
 
 #endif
