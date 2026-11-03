@@ -1,16 +1,17 @@
-#pragma once
 #ifndef JOGO_H
 #define JOGO_H
-
 
 // Tamanho da janela do jogo
 #define LARGURA_TELA 800
 #define ALTURA_TELA 600
 
-// Quantidade de vidas do jogador no começo da partida
+// Y da plataforma onde o jogador e o inimigo pisam
+#define CHAO_Y (ALTURA_TELA - 65)
+
+// Vidas do jogador no comeco da partida
 #define VIDAS_INICIAIS 5
 
-// Desenha os corações de vida
+// Desenha os coracoes de vida
 void vidas_desenhar(int vidas_atuais);
 
 #endif
