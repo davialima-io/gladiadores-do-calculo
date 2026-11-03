@@ -26,6 +26,7 @@
 #define FRAMES_ENTRE_PERGUNTAS 120
 #define FRAMES_AVISO_NIVEL 120
 #define PENALIDADE_ERRO 7.0
+#define BONUS_TEMPO_INIMIGO 5.0
 #define INTERVALO_DANO_INIMIGO 1.0
 
 // Tudo que existe so durante uma partida e volta ao zero quando ela recomeca
@@ -133,12 +134,18 @@ static void tratar_dano_do_inimigo(Partida* p) {
     p->ultimo_dano_inimigo = agora;
 }
 
+static void recompensar_morte_do_inimigo(Partida* p) {
+    tempo_adicionar(&p->tempo, BONUS_TEMPO_INIMIGO);
+    // so existem coracoes desenhados ate VIDAS_INICIAIS, entao nao passa disso
+    if (p->vidas < VIDAS_INICIAIS) p->vidas++;
+}
+
 static void tratar_tiros_no_inimigo(Partida* p) {
     for (int i = 0; i < MAX_TIROS; i++) {
         if (!p->tiros[i].ativo) continue;
         if (inimigo_colidiu_com_tiro(&p->inimigo, p->tiros[i].x, p->tiros[i].y)) {
             p->tiros[i].ativo = false;
-            inimigo_receber_dano(&p->inimigo);
+            if (inimigo_receber_dano(&p->inimigo)) recompensar_morte_do_inimigo(p);
         }
     }
 }
