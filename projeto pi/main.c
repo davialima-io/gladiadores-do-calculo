@@ -22,14 +22,13 @@
 
 #define FPS 60
 #define ALTERNATIVAS_Y 60
-#define ALTERNATIVAS_ALTURA 140   // escudo fica quadrado com 140
+#define ALTERNATIVAS_ALTURA 140   
 #define FRAMES_ENTRE_PERGUNTAS 120
 #define FRAMES_AVISO_NIVEL 120
 #define PENALIDADE_ERRO 7.0
 #define BONUS_TEMPO_INIMIGO 5.0
 #define INTERVALO_DANO_INIMIGO 1.0
 
-// Tudo que existe so durante uma partida e volta ao zero quando ela recomeca
 typedef struct {
     Jogador jogador;
     Tiro tiros[MAX_TIROS];
@@ -41,11 +40,10 @@ typedef struct {
     double ultimo_dano_inimigo;
     int acertos;
     int nivel;
-    int aviso_nivel;      // frames que faltam pro aviso de nivel sumir
-    int espera_proxima;   // frames ate a proxima pergunta aparecer
+    int aviso_nivel;
+    int espera_proxima;
 } Partida;
 
-// Coisas do Allegro que vivem o programa inteiro
 typedef struct {
     ALLEGRO_DISPLAY* tela;
     ALLEGRO_TIMER* timer;
@@ -56,7 +54,6 @@ typedef struct {
     bool fundo_ok;
 } Recursos;
 
-// Segundos ganhos por acerto: nivel 1 = 7s, nivel 2 = 6s, do 3 em diante = 5s
 static double bonus_tempo_por_nivel(int nivel) {
     double bonus = 8.0 - nivel;
     if (bonus < 5.0) bonus = 5.0;
@@ -90,7 +87,6 @@ static bool iniciar_recursos(Recursos* r) {
     r->fonte_equacao = al_load_ttf_font("C:/Windows/Fonts/arial.ttf", 20, 0);
     r->escudo = al_load_bitmap("escudo_alternativa.png");
 
-    // sem escudo o jogo roda mesmo assim, so desenha retangulos
     if (!r->escudo) printf("Aviso: escudo_alternativa.png nao encontrado!\n");
 
     if (!r->fundo_ok || !r->timer || !r->fila || !r->fonte || !r->fonte_equacao) {
@@ -125,7 +121,6 @@ static void iniciar_partida(Partida* p) {
     nova_pergunta(p);
 }
 
-// Inimigo encostando no jogador tira uma vida, no maximo uma por segundo
 static void tratar_dano_do_inimigo(Partida* p) {
     double agora = al_get_time();
     if (agora - p->ultimo_dano_inimigo < INTERVALO_DANO_INIMIGO) return;
@@ -136,7 +131,6 @@ static void tratar_dano_do_inimigo(Partida* p) {
 
 static void recompensar_morte_do_inimigo(Partida* p) {
     tempo_adicionar(&p->tempo, BONUS_TEMPO_INIMIGO);
-    // so existem coracoes desenhados ate VIDAS_INICIAIS, entao nao passa disso
     if (p->vidas < VIDAS_INICIAIS) p->vidas++;
 }
 
@@ -178,14 +172,12 @@ static void tratar_tiros_nas_alternativas(Partida* p) {
     }
 }
 
-// So passa pra proxima pergunta depois da contagem, pro jogador ver qual era a certa
 static void avancar_pergunta(Partida* p) {
     if (!p->pergunta.respondida || p->espera_proxima <= 0) return;
     p->espera_proxima--;
     if (p->espera_proxima == 0) nova_pergunta(p);
 }
 
-// Retorna false quando a partida acabou (tempo ou vidas)
 static bool atualizar_partida(Partida* p) {
     ALLEGRO_KEYBOARD_STATE teclado;
 
@@ -193,7 +185,9 @@ static bool atualizar_partida(Partida* p) {
     if (p->tempo.decorrido >= p->tempo.duracao) return false;
 
     al_get_keyboard_state(&teclado);
-    jogador_atualizar(&p->jogador, &teclado);
+    // Aqui passamos a posicao do mouse ficticia ou do ultimo evento salvo
+    jogador_atualizar(&p->jogador, &teclado, p->jogador.x, p->jogador.y);
+
     tiros_atualizar(p->tiros);
     inimigo_atualizar(&p->inimigo);
 
@@ -208,7 +202,6 @@ static bool atualizar_partida(Partida* p) {
 }
 
 static void desenhar_aviso_nivel(const Partida* p, ALLEGRO_FONT* fonte) {
-    // a sombra preta deslocada deixa o texto legivel em cima de qualquer fundo
     al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2 + 2, 302, ALLEGRO_ALIGN_CENTER, "NIVEL %d!", p->nivel);
     al_draw_textf(fonte, al_map_rgb(255, 215, 0), LARGURA_TELA / 2, 300, ALLEGRO_ALIGN_CENTER, "NIVEL %d!", p->nivel);
 }
@@ -229,7 +222,6 @@ static void desenhar_partida(Partida* p, Recursos* r, float mouse_x, float mouse
     al_draw_textf(r->fonte, al_map_rgb(255, 255, 0), LARGURA_TELA - 10, 24, ALLEGRO_ALIGN_RIGHT, "Nivel: %d", p->nivel);
     if (p->aviso_nivel > 0) desenhar_aviso_nivel(p, r->fonte_equacao);
 
-    // vidas por ultimo pra ficar por cima de tudo
     vidas_desenhar(p->vidas);
     al_flip_display();
 }
@@ -258,6 +250,9 @@ static void executar_partida(Recursos* r, Partida* p, bool* continuar_programa) 
 
         if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && evento.mouse.button == 1) {
             tiro_disparar(p->tiros, jogador_centro_x(&p->jogador), jogador_centro_y(&p->jogador), mouse_x, mouse_y);
+            // ATIVA A ANIMAÇÃO DE TIRO
+            p->jogador.atirando = true;
+            p->jogador.frame_atual = 0;
         }
 
         if (evento.type == ALLEGRO_EVENT_KEY_DOWN && evento.keyboard.keycode == ALLEGRO_KEY_F11) {
@@ -265,6 +260,11 @@ static void executar_partida(Recursos* r, Partida* p, bool* continuar_programa) 
         }
 
         if (evento.type == ALLEGRO_EVENT_TIMER) {
+            // Passa o mouse para a lógica para ele olhar pro lado certo
+            ALLEGRO_KEYBOARD_STATE teclado;
+            al_get_keyboard_state(&teclado);
+            jogador_atualizar(&p->jogador, &teclado, mouse_x, mouse_y);
+
             if (!atualizar_partida(p)) break;
             desenhar_partida(p, r, mouse_x, mouse_y);
         }
@@ -285,6 +285,9 @@ int main(void) {
         if (menu_executar(recursos.tela) == MENU_SAIR) break;
         iniciar_partida(&partida);
         executar_partida(&recursos, &partida, &continuar_programa);
+
+        // Limpa a memória do sprite ao final de cada partida
+        jogador_finalizar(&partida.jogador);
     }
 
     finalizar_recursos(&recursos);
