@@ -4,7 +4,7 @@
 #include <allegro5/allegro_image.h>
 #include <stdio.h>
 
-#define TOTAL_FRAMES 240
+#define TOTAL_FRAMES 100
 #define FPS_FUNDO 30.0
 
 static ALLEGRO_BITMAP* frame_atual = NULL;
