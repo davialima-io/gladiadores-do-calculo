@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "tela.h"
 #include "jogo.h"
+#include "creditos.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <allegro5/allegro.h>
@@ -26,7 +27,7 @@ enum { BOTAO_JOGAR, BOTAO_CREDITOS, BOTAO_SAIR, NUM_BOTOES };
 static const char* TEXTOS[NUM_BOTOES] = { "JOGAR", "CREDITOS", "SAIR" };
 
 // Retorna true quando o menu deve fechar. O resultado so vale nesse caso.
-static bool tratar_tecla(ALLEGRO_DISPLAY* display, int tecla, int* selecionado, int* resultado) {
+static bool tratar_tecla(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* fila, int tecla, int* selecionado, int* resultado) {
     if (tecla == ALLEGRO_KEY_UP || tecla == ALLEGRO_KEY_W) {
         *selecionado = (*selecionado + NUM_BOTOES - 1) % NUM_BOTOES;
     }
@@ -49,7 +50,11 @@ static bool tratar_tecla(ALLEGRO_DISPLAY* display, int tecla, int* selecionado, 
             *resultado = MENU_SAIR;
             return true;
         }
-        // creditos ainda nao tem tela, entao fica no menu
+        if (*selecionado == BOTAO_CREDITOS) {
+            creditos_executar(display);
+            // o ESC que fechou os creditos tambem chegou nessa fila e fecharia o menu
+            al_flush_event_queue(fila);
+        }
     }
     return false;
 }
@@ -93,7 +98,7 @@ static int rodar_menu(ALLEGRO_DISPLAY* display, ALLEGRO_FONT* fonte, ALLEGRO_BIT
             terminou = true;
         }
         else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
-            terminou = tratar_tecla(display, ev.keyboard.keycode, &selecionado, &resultado);
+            terminou = tratar_tecla(display, fila, ev.keyboard.keycode, &selecionado, &resultado);
         }
         else if (ev.type == ALLEGRO_EVENT_TIMER) {
             desenhar_menu(display, fonte, fundo, selecionado);
