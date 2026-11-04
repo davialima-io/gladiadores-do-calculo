@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="alternativa.c" />
+    <ClCompile Include="creditos.c" />
     <ClCompile Include="equacao.c" />
     <ClCompile Include="fundo.c" />
     <ClCompile Include="inimigo.c" />
@@ -156,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alternativa.h" />
+    <ClInclude Include="creditos.h" />
     <ClInclude Include="equacao.h" />
     <ClInclude Include="fundo.h" />
     <ClInclude Include="inimigo.h" />
