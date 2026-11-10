@@ -303,6 +303,9 @@ static void desenhar_partida(Partida* p, Recursos* r, float mouse_x, float mouse
     tiros_desenhar(p->tiros);
     inimigo_desenhar(&p->inimigo);
 
+    // depois da cena e antes do HUD, pra borda nao cobrir texto nem coracoes
+    alerta_vida_desenhar(p->vidas);
+
     tempo_desenhar(&p->tempo, r->fonte);
 
     al_draw_textf(r->fonte, al_map_rgb(255, 255, 0),
