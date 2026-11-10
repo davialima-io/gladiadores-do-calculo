@@ -9,7 +9,7 @@
 #define JOGADOR_X_INICIAL 445
 #define JOGADOR_VELOCIDADE 3
 #define JOGADOR_GRAVIDADE 0.4f
-#define JOGADOR_FORCA_PULO -14.5f
+#define JOGADOR_FORCA_PULO -14.0f
 
 // tempo de um tick do jogo (60 fps), usado pra contar a animacao
 #define PASSO_ANIMACAO (1.0f / 60.0f)
@@ -28,7 +28,7 @@
 #define TEMPO_FRAME_PARADO 0.15f
 #define TEMPO_FRAME_ATAQUE 0.08f
 #define TEMPO_FRAME_ANDANDO 0.16f
-#define TEMPO_FRAME_PULO 0.20f
+#define TEMPO_FRAME_PULO 0.15f
 
 // altura do personagem no gladiador.png, a escala sai dela
 #define ALTURA_REFERENCIA 229.0f
