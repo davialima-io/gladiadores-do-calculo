@@ -48,7 +48,12 @@
     <ClCompile Include="tela.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
-    <ClCompile Include="creditos.c">
+  <ClCompile Include="creditos.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="pause.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,6 +89,11 @@
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
     <ClInclude Include="creditos.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
   </ItemGroup>

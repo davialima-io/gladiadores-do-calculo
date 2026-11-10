@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #define TOTAL_FRAMES 100
-#define FPS_FUNDO 30.0
+#define FPS_FUNDO 100.0
 
 static ALLEGRO_BITMAP* frame_atual = NULL;
 static int numero_frame = 0;
@@ -47,7 +47,8 @@ void fundo_atualizar(void) {
         direcao_frame = 1;
     }
 
-    // se o arquivo falhar, fica o frame antigo na tela em vez de ficar sem fundo
+   // se o arquivo falhar, fica o frame antigo na tela em vez de ficar sem fundo
+
     ALLEGRO_BITMAP* novo_frame = carregar_frame(numero_frame);
     if (!novo_frame) return;
 
