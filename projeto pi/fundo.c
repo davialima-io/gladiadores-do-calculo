@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #define TOTAL_FRAMES 100
-#define FPS_FUNDO 100.0
+#define FPS_FUNDO 30.0
 
 static ALLEGRO_BITMAP* frame_atual = NULL;
 static int numero_frame = 0;

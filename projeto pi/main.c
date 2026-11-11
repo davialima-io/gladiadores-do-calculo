@@ -320,6 +320,7 @@ static void desenhar_partida(Partida* p, Recursos* r, float mouse_x, float mouse
 }
 
 // Executa a partida e controla os eventos
+// Executa a partida e controla os eventos
 static bool executar_partida(Recursos* r, Partida* p, bool* continuar_programa) {
     float mouse_x = LARGURA_TELA / 2.0f;
     float mouse_y = ALTURA_TELA / 2.0f;
@@ -393,31 +394,32 @@ static bool executar_partida(Recursos* r, Partida* p, bool* continuar_programa) 
             }
         }
 
-        // Alternar tela cheia
+        // Alternar tela cheia (pode funcionar mesmo pausado ou não)
         if (evento.type == ALLEGRO_EVENT_KEY_DOWN &&
             evento.keyboard.keycode == ALLEGRO_KEY_F11) {
             tela_alternar_tela_cheia(r->tela);
         }
+        //Só atualiza a posição da mira/mouse se o jogo NÃO estiver pausado!
+        if (!pause.ativo) {
+            if (evento.type == ALLEGRO_EVENT_MOUSE_AXES ||
+                evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+                mouse_x = evento.mouse.x;
+                mouse_y = evento.mouse.y;
+                tela_mouse_para_jogo(r->tela, &mouse_x, &mouse_y);
+            }
 
-        // Atualiza posicao do mouse
-        if (evento.type == ALLEGRO_EVENT_MOUSE_AXES ||
-            evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-            mouse_x = evento.mouse.x;
-            mouse_y = evento.mouse.y;
-            tela_mouse_para_jogo(r->tela, &mouse_x, &mouse_y);
-        }
-
-        // Atira somente fora do pause
-        if (!pause.ativo && !evento_do_pause &&
-            evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN &&
-            evento.mouse.button == 1) {
-            tiro_disparar(
-                p->tiros,
-                jogador_centro_x(&p->jogador),
-                jogador_centro_y(&p->jogador),
-                mouse_x,
-                mouse_y
-            );
+            // Atira somente fora do pause
+            if (!evento_do_pause &&
+                evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN &&
+                evento.mouse.button == 1) {
+                tiro_disparar(
+                    p->tiros,
+                    jogador_centro_x(&p->jogador),
+                    jogador_centro_y(&p->jogador),
+                    mouse_x,
+                    mouse_y
+                );
+            }
         }
 
         // Atualizacao do timer
