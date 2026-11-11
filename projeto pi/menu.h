@@ -5,12 +5,12 @@
 
 typedef enum {
     MENU_JOGAR = 0,
-    MENU_CREDITOS,   //tratado dentro do proprio menu 
+    MENU_CREDITOS,   // tratado dentro do proprio menu
     MENU_SAIR
 } MenuOpcao;
 
-/* Mostra o menu principal e fica nele ate o jogador escolher.
-   Arquivo usado: menu_fundo.png (na pasta do projeto). */
-int menu_executar(ALLEGRO_DISPLAY* display);
+// Mostra o menu principal (com o recorde embaixo) e fica nele ate o jogador escolher.
+// Arquivo usado: menu_fundo.png (na pasta do projeto).
+int menu_executar(ALLEGRO_DISPLAY* display, int recorde);
 
 #endif

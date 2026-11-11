@@ -19,6 +19,9 @@ enum { BOTAO_JOGAR, BOTAO_COMANDOS, BOTAO_CREDITOS, BOTAO_SAIR, NUM_BOTOES };
 #define BORDA_ESPESSURA 3
 #define FPS_MENU 60
 
+// Recorde fica logo abaixo do ultimo botao
+#define RECORDE_Y 570
+
 // Tela de comandos
 #define PAINEL_ESQUERDA 150
 #define PAINEL_DIREITA 650
@@ -42,6 +45,7 @@ typedef struct {
     ALLEGRO_FONT* fonte;
     ALLEGRO_BITMAP* fundo;
     ALLEGRO_EVENT_QUEUE* fila;
+    int recorde;
 } Menu;
 
 typedef struct {
@@ -163,6 +167,8 @@ static void desenhar_menu(const Menu* m, int selecionado) {
         al_draw_text(m->fonte, COR_TEXTO, x + BOTAO_LARGURA / 2, texto_y, ALLEGRO_ALIGN_CENTER, TEXTOS[i]);
     }
 
+    al_draw_textf(m->fonte, COR_BORDA, LARGURA_TELA / 2, RECORDE_Y, ALLEGRO_ALIGN_CENTER, "RECORDE: %d", m->recorde);
+
     al_flip_display();
 }
 
@@ -189,7 +195,7 @@ static int rodar_menu(const Menu* m) {
     return resultado;
 }
 
-int menu_executar(ALLEGRO_DISPLAY* display) {
+int menu_executar(ALLEGRO_DISPLAY* display, int recorde) {
     int resultado = MENU_SAIR;
 
     Menu menu;
@@ -197,6 +203,7 @@ int menu_executar(ALLEGRO_DISPLAY* display) {
     menu.fonte = al_create_builtin_font();
     menu.fundo = al_load_bitmap("menu_fundo.png");
     menu.fila = al_create_event_queue();
+    menu.recorde = recorde;
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / FPS_MENU);
 
     // sem imagem o menu funciona com fundo liso

@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +33,18 @@
 #define BONUS_TEMPO_INIMIGO 5.0
 #define INTERVALO_DANO_INIMIGO 1.0
 
+// Pontuacao
+#define PONTOS_ACERTO 100
+#define PONTOS_INIMIGO 50
+#define SCORE_Y 10
+#define ARQUIVO_RECORDE "recorde.txt"
+
+// Posicao do score e do recorde no pause (entre o titulo e o primeiro botao)
+#define PAUSE_SCORE_Y 175
+#define PAUSE_RECORDE_Y 192
+
+#define COR_PLACAR al_map_rgb(240, 200, 100)
+
 typedef struct {
     Jogador jogador;
     Tiro tiros[MAX_TIROS];
@@ -44,6 +58,8 @@ typedef struct {
     int nivel;
     int aviso_nivel;
     int espera_proxima;
+    int score;
+    int recorde;   // nao zera entre partidas, so quando o programa abre
 } Partida;
 
 typedef struct {
@@ -107,6 +123,31 @@ static bool iniciar_recursos(Recursos* r) {
     return true;
 }
 
+// se o arquivo nao existir ou estiver estragado, o recorde comeca em 0
+static void carregar_recorde(Partida* p) {
+    p->recorde = 0;
+
+    FILE* arquivo = fopen(ARQUIVO_RECORDE, "r");
+    if (!arquivo) return;
+
+    if (fscanf(arquivo, "%d", &p->recorde) != 1 || p->recorde < 0) p->recorde = 0;
+    fclose(arquivo);
+}
+
+static void salvar_recorde(const Partida* p) {
+    FILE* arquivo = fopen(ARQUIVO_RECORDE, "w");
+    if (!arquivo) return;
+
+    fprintf(arquivo, "%d\n", p->recorde);
+    fclose(arquivo);
+}
+
+// o recorde sobe junto com o score, assim o pause ja mostra o valor certo
+static void adicionar_pontos(Partida* p, int pontos) {
+    p->score += pontos;
+    if (p->score > p->recorde) p->recorde = p->score;
+}
+
 static void nova_pergunta(Partida* p) {
     equacao_gerar_nova(&p->equacao, p->nivel);
     pergunta_de_equacao(&p->pergunta, &p->equacao, LARGURA_TELA, ALTERNATIVAS_Y, ALTERNATIVAS_ALTURA, p->nivel);
@@ -125,6 +166,7 @@ static void iniciar_partida(Partida* p) {
     p->nivel = 1;
     p->aviso_nivel = 0;
     p->espera_proxima = 0;
+    p->score = 0;
 
     nova_pergunta(p);
 }
@@ -142,6 +184,7 @@ static void tratar_dano_do_inimigo(Partida* p) {
 
 static void recompensar_morte_do_inimigo(Partida* p) {
     tempo_adicionar(&p->tempo, BONUS_TEMPO_INIMIGO);
+    adicionar_pontos(p, PONTOS_INIMIGO);
     if (p->vidas < VIDAS_INICIAIS) p->vidas++;
 }
 
@@ -158,6 +201,7 @@ static void tratar_tiros_no_inimigo(Partida* p) {
 
 static void registrar_acerto(Partida* p) {
     tempo_adicionar(&p->tempo, bonus_tempo_por_nivel(p->nivel));
+    adicionar_pontos(p, PONTOS_ACERTO);
     p->acertos++;
 
     int novo_nivel = equacao_nivel_para_acertos(p->acertos);
@@ -226,6 +270,18 @@ static void desenhar_aviso_nivel(const Partida* p, ALLEGRO_FONT* fonte) {
     al_draw_textf(fonte, al_map_rgb(255, 215, 0), LARGURA_TELA / 2, AVISO_NIVEL_Y, ALLEGRO_ALIGN_CENTER, "NIVEL %d!", p->nivel);
 }
 
+static void desenhar_score(const Partida* p, ALLEGRO_FONT* fonte) {
+    al_draw_textf(fonte, al_map_rgb(255, 255, 0), LARGURA_TELA / 2, SCORE_Y, ALLEGRO_ALIGN_CENTER, "Score: %d", p->score);
+}
+
+// o pause.c nao conhece o score, entao o placar e desenhado aqui por cima do painel dele
+static void desenhar_placar_pause(const Partida* p, ALLEGRO_FONT* fonte, const MenuPause* pause) {
+    if (!pause->ativo) return;
+
+    al_draw_textf(fonte, COR_PLACAR, LARGURA_TELA / 2, PAUSE_SCORE_Y, ALLEGRO_ALIGN_CENTER, "SCORE: %d", p->score);
+    al_draw_textf(fonte, COR_PLACAR, LARGURA_TELA / 2, PAUSE_RECORDE_Y, ALLEGRO_ALIGN_CENTER, "RECORDE: %d", p->recorde);
+}
+
 static void desenhar_partida(Partida* p, Recursos* r, float mouse_x, float mouse_y, MenuPause* pause) {
     tela_preparar_frame(r->tela);
 
@@ -247,11 +303,13 @@ static void desenhar_partida(Partida* p, Recursos* r, float mouse_x, float mouse
 
     tempo_desenhar(&p->tempo, r->fonte);
     al_draw_textf(r->fonte, al_map_rgb(255, 255, 0), LARGURA_TELA - 10, 24, ALLEGRO_ALIGN_RIGHT, "Nivel: %d", p->nivel);
+    desenhar_score(p, r->fonte);
 
     if (p->aviso_nivel > 0) desenhar_aviso_nivel(p, r->fonte_equacao);
 
     vidas_desenhar(p->vidas);
     pause_desenhar(pause, r->fonte, LARGURA_TELA, ALTURA_TELA);
+    desenhar_placar_pause(p, r->fonte, pause);
 
     al_flip_display();
 }
@@ -370,14 +428,19 @@ int main(void) {
 
     if (!iniciar_recursos(&recursos)) return 1;
 
+    carregar_recorde(&partida);
+
     while (continuar_programa) {
-        if (menu_executar(recursos.tela) == MENU_SAIR) break;
+        if (menu_executar(recursos.tela, partida.recorde) == MENU_SAIR) break;
 
         bool recomecar;
 
         do {
             iniciar_partida(&partida);
             recomecar = executar_partida(&recursos, &partida, &continuar_programa);
+
+            // grava a cada partida, assim fechar a janela no meio do jogo nao perde o recorde
+            salvar_recorde(&partida);
 
             // libera o sprite do jogador no fim de cada partida
             jogador_finalizar(&partida.jogador);
