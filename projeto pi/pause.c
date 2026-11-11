@@ -47,7 +47,7 @@ void pause_inicializar(MenuPause* pause) {
     pause->opcao = 0;
 }
 
-// Trata o teclado: ESC abre/fecha, W/S ou setas navegam, ENTER confirma
+// Trata o teclado: ESC abre/fecha, W/S = navegar, ENTER confirma
 static PauseAcao tratar_teclado(MenuPause* pause, int tecla) {
     if (tecla == ALLEGRO_KEY_ESCAPE) {
         if (pause->ativo) {
@@ -74,7 +74,7 @@ static PauseAcao tratar_teclado(MenuPause* pause, int tecla) {
     return PAUSE_NENHUMA_ACAO;
 }
 
-// Trata o mouse: passar por cima seleciona, clique esquerdo confirma
+// passar por cima seleciona, clique esquerdo confirma
 static PauseAcao tratar_mouse(MenuPause* pause, const ALLEGRO_EVENT* evento, int largura_tela, int altura_tela) {
     for (int i = 0; i < TOTAL_OPCOES; i++) {
         if (!mouse_sobre_botao(evento->mouse.x, evento->mouse.y, largura_tela, altura_tela, i)) continue;

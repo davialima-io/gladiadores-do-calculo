@@ -148,19 +148,28 @@ static void mover_horizontal(Jogador* jogador, const ALLEGRO_KEYBOARD_STATE* tec
 
     if (al_key_down(teclado, ALLEGRO_KEY_A)) {
         movimento_x -= 1;
-        jogador->olhando_direita = false;
         jogador->andando = true;
     }
     else if (al_key_down(teclado, ALLEGRO_KEY_D)) {
         movimento_x += 1;
-        jogador->olhando_direita = true;
         jogador->andando = true;
     }
     else {
         jogador->andando = false;
     }
 
+    // atirando, quem decide pra onde ele olha e o mouse, nao a tecla
+    if (movimento_x != 0 && !jogador->atirando) {
+        jogador->olhando_direita = (movimento_x > 0);
+    }
+
     jogador->x += movimento_x * jogador->velocidade;
+}
+
+// vira o personagem pro lado do mouse, pra ele nao atirar de costas
+static void virar_para_mouse(Jogador* jogador, float mouse_x) {
+    if (!jogador->atirando) return;
+    jogador->olhando_direita = (mouse_x >= jogador->x + jogador->largura / 2.0f);
 }
 
 // so pula quando aperta (segurar nao conta) e esta no chao
@@ -248,6 +257,7 @@ static void atualizar_animacao(Jogador* jogador) {
 
 void jogador_atualizar(Jogador* jogador, const ALLEGRO_KEYBOARD_STATE* estado_teclado, float mouse_x, float mouse_y) {
     mover_horizontal(jogador, estado_teclado);
+    virar_para_mouse(jogador, mouse_x);
     tratar_pulo(jogador, estado_teclado);
     aplicar_gravidade(jogador);
     limitar_na_tela(jogador);
