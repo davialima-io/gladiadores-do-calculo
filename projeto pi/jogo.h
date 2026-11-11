@@ -14,4 +14,7 @@
 // Desenha os coracoes de vida
 void vidas_desenhar(int vidas_atuais);
 
+// Faz as bordas da tela pulsarem em vermelho quando resta 1 vida. Nao faz nada nos outros casos.
+void alerta_vida_desenhar(int vidas_atuais);
+
 #endif
