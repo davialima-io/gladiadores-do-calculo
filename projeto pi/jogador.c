@@ -8,8 +8,8 @@
 #define JOGADOR_ALTURA 133
 #define JOGADOR_X_INICIAL 445
 #define JOGADOR_VELOCIDADE 3
-#define JOGADOR_GRAVIDADE 0.4f
-#define JOGADOR_FORCA_PULO -14.0f
+#define JOGADOR_GRAVIDADE 0.5f
+#define JOGADOR_FORCA_PULO -13.0f
 
 // tempo de um tick do jogo (60 fps), usado pra contar a animacao
 #define PASSO_ANIMACAO (1.0f / 60.0f)
