@@ -18,6 +18,7 @@ enum { BOTAO_JOGAR, BOTAO_COMANDOS, BOTAO_CREDITOS, BOTAO_SAIR, NUM_BOTOES };
 #define BOTAO_ALTURA 60
 #define BORDA_ESPESSURA 3
 #define FPS_MENU 60
+#define BOTAO_NENHUM -1
 
 // Recorde fica logo abaixo do ultimo botao
 #define RECORDE_Y 570
@@ -65,6 +66,21 @@ static const Comando COMANDOS[] = {
 };
 #define TOTAL_COMANDOS ((int)(sizeof(COMANDOS) / sizeof(COMANDOS[0])))
 
+static float botao_y(int i) {
+    return BOTAO_Y_INICIAL + i * BOTAO_ESPACO_Y;
+}
+
+// Descobre qual botao esta embaixo do mouse. O mouse chega em pixels da janela, entao converte antes.
+static int botao_sob_mouse(const Menu* m, float mouse_x, float mouse_y) {
+    tela_mouse_para_jogo(m->display, &mouse_x, &mouse_y);
+
+    for (int i = 0; i < NUM_BOTOES; i++) {
+        float y = botao_y(i);
+        if (mouse_x >= BOTAO_X && mouse_x <= BOTAO_X + BOTAO_LARGURA && mouse_y >= y && mouse_y <= y + BOTAO_ALTURA) return i;
+    }
+    return BOTAO_NENHUM;
+}
+
 // Imagem do menu esticada na tela, ou fundo liso se ela nao carregou
 static void desenhar_fundo(ALLEGRO_BITMAP* fundo) {
     if (fundo) {
@@ -89,7 +105,7 @@ static void desenhar_comandos(const Menu* m) {
         al_draw_text(m->fonte, COR_TEXTO, COMANDOS_COLUNA_ACAO, y, ALLEGRO_ALIGN_LEFT, COMANDOS[i].acao);
     }
 
-    al_draw_text(m->fonte, COR_TEXTO, LARGURA_TELA / 2, COMANDOS_RODAPE_Y, ALLEGRO_ALIGN_CENTER, "ESC para voltar");
+    al_draw_text(m->fonte, COR_TEXTO, LARGURA_TELA / 2, COMANDOS_RODAPE_Y, ALLEGRO_ALIGN_CENTER, "ESC ou clique para voltar");
     al_flip_display();
 }
 
@@ -106,13 +122,39 @@ static bool rodar_comandos(const Menu* m) {
             if (tecla == ALLEGRO_KEY_F11) tela_alternar_tela_cheia(m->display);
             else if (tecla == ALLEGRO_KEY_ESCAPE || tecla == ALLEGRO_KEY_ENTER) return false;
         }
+        else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
+            return false;
+        }
         else if (ev.type == ALLEGRO_EVENT_TIMER) {
             desenhar_comandos(m);
         }
     }
 }
 
-// Retorna true quando o menu deve fechar. O resultado so vale nesse caso.
+// Usada pelo teclado e pelo mouse. Retorna true quando o menu deve fechar (o resultado so vale nesse caso).
+static bool ativar_botao(const Menu* m, int botao, int* resultado) {
+    switch (botao) {
+    case BOTAO_JOGAR:
+        *resultado = MENU_JOGAR;
+        return true;
+    case BOTAO_SAIR:
+        *resultado = MENU_SAIR;
+        return true;
+    case BOTAO_COMANDOS:
+        if (rodar_comandos(m)) {
+            *resultado = MENU_SAIR;
+            return true;
+        }
+        break;
+    case BOTAO_CREDITOS:
+        creditos_executar(m->display);
+        // o ESC que fechou os creditos tambem chegou nessa fila e fecharia o menu
+        al_flush_event_queue(m->fila);
+        break;
+    }
+    return false;
+}
+
 static bool tratar_tecla(const Menu* m, int tecla, int* selecionado, int* resultado) {
     if (tecla == ALLEGRO_KEY_UP || tecla == ALLEGRO_KEY_W) {
         *selecionado = (*selecionado + NUM_BOTOES - 1) % NUM_BOTOES;
@@ -128,25 +170,19 @@ static bool tratar_tecla(const Menu* m, int tecla, int* selecionado, int* result
         return true;
     }
     else if (tecla == ALLEGRO_KEY_ENTER || tecla == ALLEGRO_KEY_SPACE) {
-        if (*selecionado == BOTAO_JOGAR) {
-            *resultado = MENU_JOGAR;
-            return true;
-        }
-        if (*selecionado == BOTAO_SAIR) {
-            *resultado = MENU_SAIR;
-            return true;
-        }
-        if (*selecionado == BOTAO_COMANDOS) {
-            if (rodar_comandos(m)) {
-                *resultado = MENU_SAIR;
-                return true;
-            }
-        }
-        if (*selecionado == BOTAO_CREDITOS) {
-            creditos_executar(m->display);
-            // o ESC que fechou os creditos tambem chegou nessa fila e fecharia o menu
-            al_flush_event_queue(m->fila);
-        }
+        return ativar_botao(m, *selecionado, resultado);
+    }
+    return false;
+}
+
+// passar o mouse por cima seleciona, clique esquerdo confirma
+static bool tratar_mouse(const Menu* m, const ALLEGRO_EVENT* ev, int* selecionado, int* resultado) {
+    int botao = botao_sob_mouse(m, (float)ev->mouse.x, (float)ev->mouse.y);
+    if (botao == BOTAO_NENHUM) return false;
+
+    *selecionado = botao;
+    if (ev->type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev->mouse.button == 1) {
+        return ativar_botao(m, botao, resultado);
     }
     return false;
 }
@@ -156,15 +192,14 @@ static void desenhar_menu(const Menu* m, int selecionado) {
     desenhar_fundo(m->fundo);
 
     for (int i = 0; i < NUM_BOTOES; i++) {
-        float x = BOTAO_X;
-        float y = BOTAO_Y_INICIAL + i * BOTAO_ESPACO_Y;
+        float y = botao_y(i);
         ALLEGRO_COLOR cor = (i == selecionado) ? COR_SELECIONADO : COR_BOTAO;
 
-        al_draw_filled_rectangle(x, y, x + BOTAO_LARGURA, y + BOTAO_ALTURA, cor);
-        al_draw_rectangle(x, y, x + BOTAO_LARGURA, y + BOTAO_ALTURA, COR_BORDA, BORDA_ESPESSURA);
+        al_draw_filled_rectangle(BOTAO_X, y, BOTAO_X + BOTAO_LARGURA, y + BOTAO_ALTURA, cor);
+        al_draw_rectangle(BOTAO_X, y, BOTAO_X + BOTAO_LARGURA, y + BOTAO_ALTURA, COR_BORDA, BORDA_ESPESSURA);
 
         float texto_y = y + BOTAO_ALTURA / 2 - al_get_font_line_height(m->fonte) / 2;
-        al_draw_text(m->fonte, COR_TEXTO, x + BOTAO_LARGURA / 2, texto_y, ALLEGRO_ALIGN_CENTER, TEXTOS[i]);
+        al_draw_text(m->fonte, COR_TEXTO, BOTAO_X + BOTAO_LARGURA / 2, texto_y, ALLEGRO_ALIGN_CENTER, TEXTOS[i]);
     }
 
     al_draw_textf(m->fonte, COR_BORDA, LARGURA_TELA / 2, RECORDE_Y, ALLEGRO_ALIGN_CENTER, "RECORDE: %d", m->recorde);
@@ -187,6 +222,9 @@ static int rodar_menu(const Menu* m) {
         }
         else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
             terminou = tratar_tecla(m, ev.keyboard.keycode, &selecionado, &resultado);
+        }
+        else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES || ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+            terminou = tratar_mouse(m, &ev, &selecionado, &resultado);
         }
         else if (ev.type == ALLEGRO_EVENT_TIMER) {
             desenhar_menu(m, selecionado);
@@ -212,6 +250,7 @@ int menu_executar(ALLEGRO_DISPLAY* display, int recorde) {
     if (menu.fonte && menu.fila && timer) {
         al_register_event_source(menu.fila, al_get_display_event_source(display));
         al_register_event_source(menu.fila, al_get_keyboard_event_source());
+        al_register_event_source(menu.fila, al_get_mouse_event_source());
         al_register_event_source(menu.fila, al_get_timer_event_source(timer));
         al_start_timer(timer);
 
