@@ -49,6 +49,7 @@ typedef struct {
     Equacao equacao;
     Pergunta pergunta;
     Tempo tempo;
+    GameOverMotivo motivo_gameover;
     int vidas;
     double ultimo_dano_inimigo;
     int acertos;
@@ -145,6 +146,7 @@ static void iniciar_partida(Partida* p) {
     p->aviso_nivel = 0;
     p->espera_proxima = 0;
     p->score = 0;
+    p->motivo_gameover = GAMEOVER_TEMPO;
 
     nova_pergunta(p);
 }
@@ -223,7 +225,10 @@ static bool atualizar_partida(Partida* p, float mouse_x, float mouse_y) {
     ALLEGRO_KEYBOARD_STATE teclado;
 
     tempo_atualizar(&p->tempo);
-    if (p->tempo.decorrido >= p->tempo.duracao) return false;
+    if (p->tempo.decorrido >= p->tempo.duracao) {
+        p->motivo_gameover = GAMEOVER_TEMPO;
+        return false;
+    }
 
     al_get_keyboard_state(&teclado);
     jogador_atualizar(&p->jogador, &teclado, mouse_x, mouse_y);
@@ -234,7 +239,10 @@ static bool atualizar_partida(Partida* p, float mouse_x, float mouse_y) {
     tratar_tiros_no_inimigo(p);
     tratar_tiros_nas_alternativas(p);
 
-    if (p->vidas <= 0) return false;
+    if (p->vidas <= 0) {
+        p->motivo_gameover = GAMEOVER_VIDAS;
+        return false;
+    }
 
     avancar_pergunta(p);
     if (p->aviso_nivel > 0) p->aviso_nivel--;
@@ -329,6 +337,7 @@ static bool executar_partida(Recursos* r, Partida* p, bool* continuar_programa) 
 
     double inicio_pause = 0;
     bool recomecar = false;
+    bool partida_acabou = false;
 
     al_flush_event_queue(r->fila);
     al_start_timer(r->timer);
@@ -388,13 +397,32 @@ static bool executar_partida(Recursos* r, Partida* p, bool* continuar_programa) 
                 continue;
             }
 
-            if (!atualizar_partida(p, mouse_x, mouse_y)) break;
+            if (!atualizar_partida(p, mouse_x, mouse_y)) {
+                partida_acabou = true;
+                break;
+            }
             desenhar_partida(p, r, mouse_x, mouse_y, &pause);
         }
     }
 
     al_stop_timer(r->timer);
     al_flush_event_queue(r->fila);
+
+    if (partida_acabou && *continuar_programa) {
+        GameOverOpcao opcao = menu_gameover_executar(
+            r->tela,
+            p->motivo_gameover,
+            p->score,
+            p->recorde
+        );
+
+        if (opcao == GAMEOVER_JOGAR_NOVAMENTE) {
+            recomecar = true;
+        }
+        else if (opcao == GAMEOVER_SAIR) {
+            *continuar_programa = false;
+        }
+    }
 
     return recomecar;
 }
