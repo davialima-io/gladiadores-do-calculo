@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,7 +35,6 @@
 #define PONTOS_ACERTO 100
 #define PONTOS_INIMIGO 50
 #define SCORE_Y 10
-#define ARQUIVO_RECORDE "recorde.txt"
 
 // Posicao do score e do recorde no pause (entre o titulo e o primeiro botao)
 #define PAUSE_SCORE_Y 175
@@ -59,7 +56,7 @@ typedef struct {
     int aviso_nivel;
     int espera_proxima;
     int score;
-    int recorde;   // nao zera entre partidas, so quando o programa abre
+    int recorde;   // nao zera entre partidas, so quando o programa fecha e abre de novo
 } Partida;
 
 typedef struct {
@@ -121,25 +118,6 @@ static bool iniciar_recursos(Recursos* r) {
     al_register_event_source(r->fila, al_get_mouse_event_source());
 
     return true;
-}
-
-// se o arquivo nao existir ou estiver estragado, o recorde comeca em 0
-static void carregar_recorde(Partida* p) {
-    p->recorde = 0;
-
-    FILE* arquivo = fopen(ARQUIVO_RECORDE, "r");
-    if (!arquivo) return;
-
-    if (fscanf(arquivo, "%d", &p->recorde) != 1 || p->recorde < 0) p->recorde = 0;
-    fclose(arquivo);
-}
-
-static void salvar_recorde(const Partida* p) {
-    FILE* arquivo = fopen(ARQUIVO_RECORDE, "w");
-    if (!arquivo) return;
-
-    fprintf(arquivo, "%d\n", p->recorde);
-    fclose(arquivo);
 }
 
 // o recorde sobe junto com o score, assim o pause ja mostra o valor certo
@@ -428,7 +406,8 @@ int main(void) {
 
     if (!iniciar_recursos(&recursos)) return 1;
 
-    carregar_recorde(&partida);
+    // cada vez que o jogo abre o record começa em 0
+    partida.recorde = 0;
 
     while (continuar_programa) {
         if (menu_executar(recursos.tela, partida.recorde) == MENU_SAIR) break;
@@ -438,9 +417,6 @@ int main(void) {
         do {
             iniciar_partida(&partida);
             recomecar = executar_partida(&recursos, &partida, &continuar_programa);
-
-            // grava a cada partida, assim fechar a janela no meio do jogo nao perde o recorde
-            salvar_recorde(&partida);
 
             // libera o sprite do jogador no fim de cada partida
             jogador_finalizar(&partida.jogador);
