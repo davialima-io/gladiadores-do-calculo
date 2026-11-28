@@ -7,6 +7,12 @@
 
 #define VIDA_MAXIMA_INIMIGO 17
 
+// o valor tambem e a linha da tabela de frames do leao
+typedef enum {
+    INIMIGO_CORRENDO = 0,
+    INIMIGO_ATACANDO = 1
+} EstadoInimigo;
+
 typedef struct {
     float x;
     float y;
@@ -22,15 +28,26 @@ typedef struct {
 
     int vida;
     int vida_maxima;
+
+    EstadoInimigo estado;
+    int frame_atual;
+    float tempo_animacao;
+    ALLEGRO_BITMAP* sprite_sheet;
 } Inimigo;
 
 void inimigo_inicializar(Inimigo* inimigo);
-void inimigo_atualizar(Inimigo* inimigo);
+
+// alvo_x e alvo_y e o centro do jogador, o leao persegue ele
+void inimigo_atualizar(Inimigo* inimigo, float alvo_x, float alvo_y);
+
+// true enquanto o leao esta na animacao de ataque (jogador ao alcance)
+bool inimigo_atacando(const Inimigo* inimigo);
 
 // Tira uma vida. Quando zera, o inimigo volta pro ponto inicial com a vida cheia e retorna true.
 bool inimigo_receber_dano(Inimigo* inimigo);
 
 bool inimigo_colidiu_com_tiro(const Inimigo* inimigo, float tiro_x, float tiro_y);
 void inimigo_desenhar(const Inimigo* inimigo);
+void inimigo_finalizar(Inimigo* inimigo);
 
 #endif

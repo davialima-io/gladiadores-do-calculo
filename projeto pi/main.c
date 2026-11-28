@@ -152,11 +152,12 @@ static void iniciar_partida(Partida* p) {
 }
 
 // o inimigo so tira vida a cada INTERVALO_DANO_INIMIGO, senao zerava tudo em 1 segundo encostado
+// o leao machuca quando esta atacando (jogador ao alcance) e encostar nele continua machucando
 static void tratar_dano_do_inimigo(Partida* p) {
     double agora = al_get_time();
 
     if (agora - p->ultimo_dano_inimigo < INTERVALO_DANO_INIMIGO) return;
-    if (!jogador_colidiu_com_inimigo(&p->jogador, &p->inimigo)) return;
+    if (!inimigo_atacando(&p->inimigo) && !jogador_colidiu_com_inimigo(&p->jogador, &p->inimigo)) return;
 
     p->vidas--;
     p->ultimo_dano_inimigo = agora;
@@ -233,7 +234,7 @@ static bool atualizar_partida(Partida* p, float mouse_x, float mouse_y) {
     al_get_keyboard_state(&teclado);
     jogador_atualizar(&p->jogador, &teclado, mouse_x, mouse_y);
     tiros_atualizar(p->tiros);
-    inimigo_atualizar(&p->inimigo);
+    inimigo_atualizar(&p->inimigo, jogador_centro_x(&p->jogador), jogador_centro_y(&p->jogador));
 
     tratar_dano_do_inimigo(p);
     tratar_tiros_no_inimigo(p);
@@ -446,8 +447,9 @@ int main(void) {
             iniciar_partida(&partida);
             recomecar = executar_partida(&recursos, &partida, &continuar_programa);
 
-            // libera o sprite do jogador no fim de cada partida
+            // libera os sprites do jogador e do inimigo no fim de cada partida
             jogador_finalizar(&partida.jogador);
+            inimigo_finalizar(&partida.inimigo);
         } while (recomecar && continuar_programa);
     }
 
