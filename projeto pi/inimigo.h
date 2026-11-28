@@ -30,6 +30,7 @@ typedef struct {
     int vida_maxima;
 
     EstadoInimigo estado;
+    bool alvo_no_alcance;   // jogador ao alcance da mordida agora
     int frame_atual;
     float tempo_animacao;
     ALLEGRO_BITMAP* sprite_sheet;
@@ -40,7 +41,7 @@ void inimigo_inicializar(Inimigo* inimigo);
 // alvo_x e alvo_y e o centro do jogador, o leao persegue ele
 void inimigo_atualizar(Inimigo* inimigo, float alvo_x, float alvo_y);
 
-// true enquanto o leao esta na animacao de ataque (jogador ao alcance)
+// true quando o leao esta atacando e o jogador esta ao alcance da mordida
 bool inimigo_atacando(const Inimigo* inimigo);
 
 // Tira uma vida. Quando zera, o inimigo volta pro ponto inicial com a vida cheia e retorna true.

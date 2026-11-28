@@ -17,12 +17,16 @@
 #define ALCANCE_ATAQUE_X 120
 #define ALCANCE_ATAQUE_Y INIMIGO_TAMANHO
 
+// pra sair do ataque o jogador precisa se afastar mais um pouco do que precisou pra entrar
+#define FOLGA_SAIDA_ATAQUE 40
+
 // abaixo disso o leao nao anda nem vira, senao ficava tremendo embaixo do jogador no pulo
 #define ZONA_PARADA_X 8
 
-// sprite sheet do leao (leao_medieval.png)
-#define LEAO_SHEET_LARGURA 1536
-#define LEAO_SHEET_ALTURA 1024
+// sprite sheet do leao (leao_medieval.png): cada frame sozinho numa celula de 280x200,
+// senao o recorte pegava pedaco do leao do lado
+#define LEAO_SHEET_LARGURA 2240
+#define LEAO_SHEET_ALTURA 400
 #define LEAO_ESTADOS 2
 #define LEAO_COLUNAS 8
 #define ALTURA_REFERENCIA_LEAO 145.0f
@@ -32,7 +36,7 @@
 #define TEMPO_FRAME_CORRENDO 0.07f
 #define TEMPO_FRAME_ATACANDO 0.10f
 
-// cada frame foi medido no png porque a grade nao e uniforme
+// posicao de cada frame dentro do png
 // cx = centro de massa do desenho, pe = linha dos pes
 typedef struct {
     int x, y, w, h;
@@ -43,22 +47,22 @@ typedef struct {
 // linha 0 = correr (8 frames), linha 1 = atacar (6 frames)
 static const FrameLeao FRAMES_LEAO[LEAO_ESTADOS][LEAO_COLUNAS] = {
     {
-        { 4, 414, 195, 150, 111.8f, 564 },
-        { 180, 420, 205, 143, 302.7f, 564 },
-        { 391, 420, 183, 141, 489.0f, 564 },
-        { 577, 417, 187, 144, 677.0f, 564 },
-        { 758, 414, 198, 146, 869.1f, 564 },
-        { 946, 416, 206, 146, 1065.5f, 564 },
-        { 1152, 416, 192, 147, 1256.1f, 564 },
-        { 1334, 419, 197, 143, 1442.9f, 564 },
+        { 42, 34, 195, 150, 149.8f, 184 },
+        { 317, 40, 205, 143, 439.7f, 184 },
+        { 608, 40, 183, 141, 706.0f, 184 },
+        { 886, 37, 187, 144, 986.0f, 184 },
+        { 1161, 34, 198, 146, 1272.1f, 184 },
+        { 1437, 36, 206, 146, 1556.5f, 184 },
+        { 1724, 36, 192, 147, 1828.1f, 184 },
+        { 2001, 39, 197, 143, 2109.9f, 184 },
     },
     {
-        { 10, 739, 225, 155, 137.9f, 900 },
-        { 252, 760, 218, 137, 372.9f, 900 },
-        { 479, 730, 219, 146, 601.5f, 900 },
-        { 733, 726, 270, 157, 883.9f, 900 },
-        { 1024, 778, 260, 135, 1169.8f, 900 },
-        { 1305, 761, 220, 143, 1426.5f, 900 },
+        { 27, 223, 225, 155, 154.9f, 384 },
+        { 311, 244, 218, 137, 431.9f, 384 },
+        { 590, 214, 219, 146, 712.5f, 384 },
+        { 845, 210, 270, 157, 995.9f, 384 },
+        { 1130, 262, 260, 135, 1275.8f, 384 },
+        { 1430, 245, 220, 143, 1551.5f, 384 },
     },
 };
 
@@ -92,6 +96,7 @@ static void voltar_ao_ponto_inicial(Inimigo* inimigo) {
     inimigo->vida = inimigo->vida_maxima;
 
     inimigo->estado = INIMIGO_CORRENDO;
+    inimigo->alvo_no_alcance = false;
     inimigo->frame_atual = 0;
     inimigo->tempo_animacao = 0;
 }
@@ -114,9 +119,13 @@ static void virar_para_alvo(Inimigo* inimigo, float dx) {
 }
 
 // o ataque so vale com o jogador perto e mais ou menos na mesma altura, senao morderia o ar quando ele pula
+// a folga evita o leao trocar de animacao a cada frame quando o jogador corre bem na borda do alcance
 static void atualizar_estado(Inimigo* inimigo, float dx, float dy) {
-    bool no_alcance = fabsf(dx) <= ALCANCE_ATAQUE_X && fabsf(dy) <= ALCANCE_ATAQUE_Y;
-    EstadoInimigo novo = no_alcance ? INIMIGO_ATACANDO : INIMIGO_CORRENDO;
+    inimigo->alvo_no_alcance = fabsf(dx) <= ALCANCE_ATAQUE_X && fabsf(dy) <= ALCANCE_ATAQUE_Y;
+
+    float folga = (inimigo->estado == INIMIGO_ATACANDO) ? FOLGA_SAIDA_ATAQUE : 0;
+    bool manter = fabsf(dx) <= ALCANCE_ATAQUE_X + folga && fabsf(dy) <= ALCANCE_ATAQUE_Y + folga;
+    EstadoInimigo novo = manter ? INIMIGO_ATACANDO : INIMIGO_CORRENDO;
 
     // trocou de animacao, comeca do frame 0
     if (novo != inimigo->estado) {
@@ -188,8 +197,9 @@ void inimigo_atualizar(Inimigo* inimigo, float alvo_x, float alvo_y) {
     atualizar_animacao(inimigo);
 }
 
+// a animacao de ataque pode durar um pouco mais que o alcance (folga), mas so morde com o jogador ao alcance
 bool inimigo_atacando(const Inimigo* inimigo) {
-    return inimigo->estado == INIMIGO_ATACANDO;
+    return inimigo->estado == INIMIGO_ATACANDO && inimigo->alvo_no_alcance;
 }
 
 bool inimigo_receber_dano(Inimigo* inimigo) {
